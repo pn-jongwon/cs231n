@@ -1,0 +1,5369 @@
+﻿1
+00:00:02,740 --> 00:00:07,000
+Okay, so let me dive into some
+administrative
+
+2
+00:00:09,900 --> 00:00:14,900
+points first. So again, recall that
+assignment 1 is due next Wednesday.
+
+3
+00:00:14,900 --> 00:00:19,050
+You have about 150 hours left,
+and I use hours because there's a more
+
+4
+00:00:19,050 --> 00:00:23,320
+imminent sense of doom and remember that
+a third of those hours you'll be
+
+5
+00:00:23,320 --> 00:00:29,278
+unconscious, so you don't have that much
+time. It's really running out. And you
+
+6
+00:00:29,278 --> 00:00:31,768
+know you might think that you have late
+days and so on but these assignments just get
+
+7
+00:00:31,768 --> 00:00:38,640
+harder over time so you want to save
+those and so on, so start now. Let's see. So
+
+8
+00:00:38,640 --> 00:00:43,109
+there's no office hours or anything like
+that on Monday. I'll hold make up office
+
+9
+00:00:43,109 --> 00:00:45,839
+hours on Wednesday because I want you
+guys to be able to talk to me about the
+
+10
+00:00:45,840 --> 00:00:49,260
+especially projects and so on, so I'll be
+moving my office hours from Monday to
+
+11
+00:00:49,260 --> 00:00:52,820
+Wednesday. Usually I had my office hours
+at 6PM. Instead I'll have them at 5PM
+
+12
+00:00:52,820 --> 00:00:59,909
+and usually it's in Gates 260 but now
+it'll be in Gates 259, so minus 1 on both and yeah
+
+13
+00:00:59,909 --> 00:01:03,429
+and also to note, when you're going to be
+studying for midterm that's coming up in
+
+14
+00:01:03,429 --> 00:01:04,170
+a few weeks
+
+15
+00:01:04,170 --> 00:01:07,109
+make sure you go through the lecture
+notes as well which are really part of
+
+16
+00:01:07,109 --> 00:01:09,819
+this class and I kind of pick and choose
+some of the things that I think are most
+
+17
+00:01:09,819 --> 00:01:13,579
+valuable to present in a lecture but
+there's quite a bit of, you know, more material
+
+18
+00:01:13,579 --> 00:01:16,548
+to be aware of that might pop up in the
+midterm, even though I'm covering some of
+
+19
+00:01:16,549 --> 00:01:19,610
+the most important stuff usually in the lecture,
+so do read through those lecture
+
+20
+00:01:19,610 --> 00:01:25,618
+notes. They're complimentary to the lectures.
+And so the material for the midterm will be
+
+21
+00:01:25,618 --> 00:01:32,269
+drawn from both the lectures and the notes. Okay.
+So having said all that, we're going to
+
+22
+00:01:32,269 --> 00:01:36,769
+dive into the material. So where we are
+right now, just as a reminder, we have
+
+23
+00:01:36,769 --> 00:01:39,989
+the score function, we looked at several
+loss functions such as the SVM loss
+
+24
+00:01:39,989 --> 00:01:44,359
+function last time, and we look at the
+full loss that you achieve for any
+
+25
+00:01:44,359 --> 00:01:49,379
+particular set of weights on, over your
+training data, and this loss is made up of
+
+26
+00:01:49,379 --> 00:01:53,509
+two components. There's a data loss and
+a regularization loss, right. And really what we want to do
+
+27
+00:01:53,509 --> 00:01:57,200
+is we want to derive out the gradient
+expression of the loss function with respect to the
+
+28
+00:01:57,200 --> 00:02:01,118
+weights and we want to do this so that
+we can actually perform the optimization
+
+29
+00:02:01,118 --> 00:02:07,069
+process. And in the optimization process we're doing
+gradient descent, where we iterate evaluating
+
+30
+00:02:07,069 --> 00:02:11,030
+the gradient on your weights, doing a
+parameter update and just repeating this
+
+31
+00:02:11,030 --> 00:02:14,259
+over and over again, so that we're
+converging to
+
+32
+00:02:14,259 --> 00:02:17,929
+the low points of that loss function and
+when we arrive at a low loss, that's
+
+33
+00:02:17,930 --> 00:02:20,799
+equivalent to making good predictions
+over our training data in terms of the
+
+34
+00:02:20,799 --> 00:02:25,030
+scores that come out. Now we also saw
+that are two kinds of ways to evaluate the
+
+35
+00:02:25,030 --> 00:02:29,019
+gradient. There's a numerical gradient
+and this is very easy to write but it's
+
+36
+00:02:29,019 --> 00:02:32,840
+extremely slow to evaluate, and there's
+analytic gradient, which is, which you
+
+37
+00:02:32,840 --> 00:02:36,658
+obtain by using calculus and we'll be
+going into that in this lecture quite a
+
+38
+00:02:36,658 --> 00:02:41,318
+bit more and so it's fast, exact, which is
+great, but it's not, you can get it wrong
+
+39
+00:02:41,318 --> 00:02:45,969
+sometimes, and so we always what we call
+gradient check, where we write all
+
+40
+00:02:45,969 --> 00:02:48,639
+the expressions to compute the analytic
+gradients, and then we double check its
+
+41
+00:02:48,639 --> 00:02:51,828
+correctness with numerical gradient and
+so I'm not sure if you're going to see
+
+42
+00:02:51,829 --> 00:02:59,250
+that, you're going to see that definitely the
+assignments. Okay, so, now you might be
+
+43
+00:02:59,250 --> 00:03:04,378
+tempted to, when you see this setup, we
+just want to derive the gradient of the
+
+44
+00:03:04,378 --> 00:03:08,459
+loss function with respect to the weights. You
+might be tempted to just, you know, right
+
+45
+00:03:08,459 --> 00:03:11,709
+out the full loss and just start to take
+the gradients as you see your calculus
+
+46
+00:03:11,709 --> 00:03:16,120
+class, but the point I'd like to make is that you
+should think much more of this in terms
+
+47
+00:03:16,120 --> 00:03:22,480
+of computational graphs, instead of just
+taking, thinking of one giant expression
+
+48
+00:03:22,480 --> 00:03:25,369
+that you're going to derive with
+pen and paper the expression for the
+
+49
+00:03:25,370 --> 00:03:27,549
+gradient and the reason for that
+
+50
+00:03:27,549 --> 00:03:31,689
+so here we are thinking about these
+values flow, flowing through a
+
+51
+00:03:31,689 --> 00:03:35,509
+computational graph where you have these
+operations along circles and they're
+
+52
+00:03:35,509 --> 00:03:38,979
+basically little function pieces that
+transform your inputs all the way to the
+
+53
+00:03:38,979 --> 00:03:43,018
+loss function at the end, so we start off
+with our data and our parameters as
+
+54
+00:03:43,019 --> 00:03:46,079
+inputs. They feed through this
+computational graph, which is just all
+
+55
+00:03:46,079 --> 00:03:49,790
+these series of functions along the way,
+and at the end, we get a single number
+
+56
+00:03:49,790 --> 00:03:53,590
+which is the loss. And the reason that
+I'd like you to think about it this way is
+
+57
+00:03:53,590 --> 00:03:57,069
+that, these expressions right now look
+very small and you might be able to
+
+58
+00:03:57,070 --> 00:04:00,339
+derive these gradients, but these
+expressions are, in computational graphs, are
+
+59
+00:04:00,340 --> 00:04:04,250
+about to get very big and, so for example,
+convolutional neural networks will have
+
+60
+00:04:04,250 --> 00:04:08,829
+hundreds maybe or dozens of operations,
+so we'll have all these images
+
+61
+00:04:08,829 --> 00:04:12,939
+flowing through like pretty big computational
+graph to get our loss and so it becomes
+
+62
+00:04:12,939 --> 00:04:16,858
+impractical to just write out these
+expressions, and convolutional networks are
+
+63
+00:04:16,858 --> 00:04:19,370
+not even the worst of it. Once you
+actually start to, for example, do
+
+64
+00:04:19,370 --> 00:04:23,509
+something called a Neural Turing Machine,
+which is a paper from DeepMind, where
+
+65
+00:04:23,509 --> 00:04:26,329
+this is basically differentiable 
+Turing machine
+
+66
+00:04:26,329 --> 00:04:30,128
+so the whole thing is differentiable, the
+whole procedure that the computer is
+
+67
+00:04:30,129 --> 00:04:33,590
+performing on a tape is made smooth
+and is differentiable computer basically
+
+68
+00:04:33,591 --> 00:04:39,519
+and the computational graph of this is huge,
+and not only is this, this is not it
+
+69
+00:04:39,519 --> 00:04:42,478
+because what you end up doing and we're
+going to recurrent neural networks in a
+
+70
+00:04:42,478 --> 00:04:45,848
+bit, but what you end up doing is you end
+up unrolling this graph, so think about
+
+71
+00:04:45,848 --> 00:04:51,658
+this graph copied many hundreds of time
+steps and so you end up with this giant
+
+72
+00:04:51,658 --> 00:04:56,379
+monster of hundreds of thousands of
+nodes and little computational units and
+
+73
+00:04:56,379 --> 00:04:59,819
+so it's impossible to write out, you know,
+here's the loss for the Neural Turing
+
+74
+00:04:59,819 --> 00:05:03,650
+Machine. It's just impossible, it would
+take like billions of pages, and so we
+
+75
+00:05:03,651 --> 00:05:07,068
+have to think about this more in terms
+of data structures of little functions
+
+76
+00:05:07,069 --> 00:05:11,710
+transforming intermediate variables to
+guess the loss at the very end. Okay. So we're going
+
+77
+00:05:11,711 --> 00:05:14,318
+to be looking specifically at
+computational graphs and how we can derive
+
+78
+00:05:14,319 --> 00:05:20,560
+the gradient on the inputs with respect
+to the loss function at the very end. Okay.
+
+79
+00:05:20,560 --> 00:05:25,569
+So let's start off simple and concrete. So let's 
+consider a very small computational graph where
+
+80
+00:05:25,569 --> 00:05:29,778
+we have scalars as inputs to this graph, x, y and
+z, and they take on these specific values
+
+81
+00:05:29,778 --> 00:05:35,069
+in this example of -2, 5 and -4,
+and we have this very small graph
+
+82
+00:05:35,069 --> 00:05:38,669
+or circuit, you'll hear me refer to these
+interchangeably either as a graph or
+
+83
+00:05:38,670 --> 00:05:43,038
+a circuit, so we have this graph that at
+the end gives us this output -12.
+
+84
+00:05:43,038 --> 00:05:47,288
+Okay. So here what I've done is I've
+already pre-filled what we'll call the
+
+85
+00:05:47,288 --> 00:05:51,120
+forward pass of this graph, where I set
+the inputs and then I compute the outputs
+
+86
+00:05:51,120 --> 00:05:56,288
+And now what we'd like to do is, we'd like to
+derive the gradients of the expression on
+
+87
+00:05:56,288 --> 00:06:01,250
+the inputs, and, so what we'll do now, is,
+I'll introduced this intermediate variable
+
+88
+00:06:01,250 --> 00:06:07,050
+q after the plus gate, so there's a plus gate
+and times gate, as I'll refer to them, and
+
+89
+00:06:07,050 --> 00:06:10,800
+this plus gate is computing this output
+q, and so q is this intermediate as
+
+90
+00:06:10,800 --> 00:06:14,788
+a result of x plus y, and then f is a
+multiplication of q and z. And what I've written
+
+91
+00:06:14,788 --> 00:06:19,360
+out here is, basically, what we want is the
+gradients, the derivatives, df/dx, df/dy,
+
+92
+00:06:19,360 --> 00:06:25,598
+df/dz. And I've written out
+the intermediate, these little gradients
+
+93
+00:06:25,598 --> 00:06:30,120
+for every one of these two expressions
+separately, so now we've performed forward
+
+94
+00:06:30,120 --> 00:06:33,490
+pass going from left to right, and what
+we'll do now is we'll derive the backward
+
+95
+00:06:33,490 --> 00:06:35,699
+pass, we'll go from the back
+
+96
+00:06:35,699 --> 00:06:39,300
+to the front, computing gradients of all
+the intermediates in our circuit until
+
+97
+00:06:39,300 --> 00:06:43,509
+at the very end, we're going to build up to
+get the gradients on the inputs, and so we
+
+98
+00:06:43,509 --> 00:06:47,680
+start off at the very right and, as a
+base case sort of this recursive
+
+99
+00:06:47,680 --> 00:06:52,670
+procedure, we're considering the gradient
+of f with respective to f, so this is just the
+
+100
+00:06:52,670 --> 00:06:56,020
+identity function, so what is the
+derivative of it,
+
+101
+00:06:56,021 --> 00:06:57,240
+identity mapping?
+
+102
+00:06:59,000 --> 00:07:06,240
+What is the gradient of df by df? It's one, right?
+So the identity has a gradient of one.
+
+103
+00:07:06,240 --> 00:07:10,329
+So that's our base case. We start off
+with a one, and now we're going to go
+
+104
+00:07:10,329 --> 00:07:18,519
+backwards through this graph. So, we want
+the gradient of f with respect to z.
+
+105
+00:07:18,519 --> 00:07:21,089
+So what is that in this computational graph? 
+
+106
+00:07:24,019 --> 00:07:27,089
+Okay, it's q, so we have that written out right
+
+107
+00:07:27,089 --> 00:07:32,879
+here and what is q in this particular
+example? It's 3, right? So the gradient
+
+108
+00:07:32,879 --> 00:07:36,279
+on z, according to this will, become
+just 3. So I'm going to be writing the gradients
+
+109
+00:07:36,279 --> 00:07:42,309
+under the lines in red and the values
+are in green above the lines. So with the
+
+110
+00:07:42,310 --> 00:07:48,420
+gradient on the, in the front is 1, and
+now the gradient on z is 3, and what red 3 is telling
+
+111
+00:07:48,420 --> 00:07:52,009
+you really intuitively, keep in mind the
+interpretation of a gradient, is what
+
+112
+00:07:52,009 --> 00:07:58,459
+that's saying is that the influence of
+z on the final value is positive and
+
+113
+00:07:58,459 --> 00:08:02,859
+with, sort of a force of 3. So if I
+increment z by a small amount h
+
+114
+00:08:02,860 --> 00:08:07,759
+then the output of the circuit will
+react by increasing, because it's a
+
+115
+00:08:07,759 --> 00:08:13,009
+positive 3, will increase by 3h, so
+small change will result in a positive
+
+116
+00:08:13,010 --> 00:08:18,560
+change in the output. Now the
+gradient on q in this case will be
+
+117
+00:08:21,009 --> 00:08:30,860
+So df/dq is z. What is z? -4. Okay?
+So we get a gradient of -4 on that path
+
+118
+00:08:30,860 --> 00:08:34,599
+of the circuit, and what that's saying is
+that if q were to increase, then the output
+
+119
+00:08:34,599 --> 00:08:39,740
+of the circuit will decrease, okay, by, if
+you increase by h, the output of the circuit
+
+120
+00:08:39,740 --> 00:08:44,789
+will decrease by 4h. That's the
+slope, is -4. Okay, now we're going
+
+121
+00:08:44,789 --> 00:08:48,480
+to continue this recursive process through this
+plus gate and this is where things get
+
+122
+00:08:48,480 --> 00:08:49,039
+slightly interesting
+
+123
+00:08:49,039 --> 00:08:54,328
+I suppose. So we'd like to compute the
+gradient on f on y with respect to y
+
+124
+00:08:54,328 --> 00:09:00,208
+and so the gradient on y in
+this particular graph will become
+
+125
+00:09:03,909 --> 00:09:07,179
+Let's just guess and then we'll 
+see how this gets derived properly. 
+
+126
+00:09:12,209 --> 00:09:15,208
+So I hear some murmurs of the right answer.
+It will be -4. So let's see how. 
+
+127
+00:09:15,209 --> 00:09:17,800
+So there are many ways to derive it at this point
+
+128
+00:09:17,801 --> 00:09:21,000
+because the expression is very small and you can 
+kind of, glance at it, but the way I'd like to 
+
+129
+00:09:21,001 --> 00:09:23,979
+think about this is by applying chain rule, okay.
+
+130
+00:09:23,980 --> 00:09:27,709
+So the chain rule says that if you would
+like to derive the gradient of f on y
+
+131
+00:09:27,710 --> 00:09:33,208
+then it's equal to df/dq times
+dq/dy, right? And so we've
+
+132
+00:09:33,208 --> 00:09:36,438
+computed both of those expressions, in
+particular dq/dy, we know, is
+
+133
+00:09:36,438 --> 00:09:42,519
+-4, so that's the effect of the
+influence of q on f, is df/dq, which is
+
+134
+00:09:42,519 --> 00:09:46,619
+-4, and now we know the local, 
+we'd like to know the local influence
+
+135
+00:09:46,619 --> 00:09:52,449
+of y on q, and that local influence
+of y on q is 1, because that's the local
+
+136
+00:09:52,450 --> 00:09:58,969
+as I'll refer to as the local derivative of y
+for the plus gate, and so the chain rule
+
+137
+00:09:58,970 --> 00:10:02,019
+tells us that the correct thing to do to
+chain these two gradients, the local
+
+138
+00:10:02,019 --> 00:10:06,139
+gradient of y on q, and the,
+kind of global gradient of q on the
+
+139
+00:10:06,139 --> 00:10:10,948
+output of the circuit, is to multiply
+them. So we'll get -4 times 1
+
+140
+00:10:10,948 --> 00:10:14,588
+And so, this is kind of the, the crux of how
+backpropagation works. This is a very
+
+141
+00:10:14,589 --> 00:10:18,209
+important to understand here that, we have
+these two pieces that we keep
+
+142
+00:10:18,210 --> 00:10:24,289
+multiplying through when we perform the chain rule.
+We have q computed x + y, and
+
+143
+00:10:24,289 --> 00:10:29,379
+the derivative x and y, with respect to that
+single expression is 1 and 1. So keep
+
+144
+00:10:29,379 --> 00:10:32,749
+in mind the interpretation of the gradient.
+What that's saying is that x and y have a
+
+145
+00:10:32,749 --> 00:10:38,509
+positive influence on q, with a slope
+of 1. So increasing x by h
+
+146
+00:10:38,509 --> 00:10:44,548
+will increase q by h, and what we'd eventually
+like is, we'd like the influence of y
+
+147
+00:10:44,548 --> 00:10:49,980
+on the final output of the circuit, And so
+the way this end up working is, you take
+
+148
+00:10:49,980 --> 00:10:53,480
+the influence of y on q, and we know
+the influence of q on the final loss
+
+149
+00:10:53,480 --> 00:10:57,058
+which is what we are recursively
+computing here through this graph, and
+
+150
+00:10:57,058 --> 00:11:00,350
+the correct thing to do is to multiply
+them, so we end up with -4 times 1
+
+151
+00:11:00,351 --> 00:11:05,189
+gets you -4. And so the way this
+works out is, basically what this is
+
+152
+00:11:05,190 --> 00:11:08,649
+saying is that the influence of y on
+the final output of the circuit is -4
+
+153
+00:11:08,649 --> 00:11:14,649
+so increasing y should decrease the
+output of the circuit by -4 times the
+
+154
+00:11:14,649 --> 00:11:18,230
+little change that you've made. And the way
+that end up working out is y has a
+
+155
+00:11:18,230 --> 00:11:21,810
+positive influence on q, so increasing
+y, slightly increases q
+
+156
+00:11:21,810 --> 00:11:27,959
+which slightly decreases the output of the circuit,
+okay? So chain rule is kind of giving us this
+
+157
+00:11:27,960 --> 00:11:29,320
+correspondence. Go ahead.
+
+158
+00:11:29,320 --> 00:11:38,360
+(Student is asking question)
+
+159
+00:11:38,360 --> 00:11:42,559
+Yeap, thank you. So we're going to get into this.
+You'll see many, basically this entire class
+
+160
+00:11:42,559 --> 00:11:45,259
+is about this, so you'll see many 
+many instantiations of this and
+
+161
+00:11:45,259 --> 00:11:48,889
+I'll drill this into you by the end of this
+class and you'll understand it. You will not
+
+162
+00:11:48,889 --> 00:11:51,870
+have any symbolic expressions anywhere
+once we compute this, once we're actually
+
+163
+00:11:51,870 --> 00:11:54,639
+implementing this and you'll see
+implementations of it later in this.
+
+164
+00:11:54,639 --> 00:11:57,009
+It will always be just be vectors and numbers.
+
+165
+00:11:57,009 --> 00:12:02,230
+Raw vectors, numbers. Okay, and looking at x, we
+have a very similar thing that happens.
+
+166
+00:12:02,230 --> 00:12:05,889
+We want df/dx. That's our final objective,
+ but, and we have to combine it.
+
+167
+00:12:05,889 --> 00:12:09,799
+We know what the x's, what is x's influence on q
+and what is q's influence 
+
+168
+00:12:09,799 --> 00:12:13,979
+on the end of the circuit, and so that
+ends up being the chain rule, so you take
+
+169
+00:12:13,980 --> 00:12:19,240
+-4 times 1 and gives you -4, okay?
+So the way this works, to generalize a
+
+170
+00:12:19,240 --> 00:12:23,289
+bit from this example and the way to think
+about it is as follows. You are a gate
+
+171
+00:12:23,289 --> 00:12:28,429
+embedded in a circuit and this is a very
+large computational graph or circuit and
+
+172
+00:12:28,429 --> 00:12:32,250
+you receive some inputs, some
+particular numbers x and y come in
+
+173
+00:12:32,250 --> 00:12:39,059
+and you perform some operation f on them and
+compute some output z. And now this
+
+174
+00:12:39,059 --> 00:12:43,019
+value of z goes into computational graph and
+something happens to it but you're just
+
+175
+00:12:43,019 --> 00:12:46,169
+a gate hanging out in a circuit and
+you're not sure what happens, but by the
+
+176
+00:12:46,169 --> 00:12:50,939
+end of the circuit the loss gets computed, okay? And
+that's the forward pass and then we're
+
+177
+00:12:50,940 --> 00:12:56,250
+proceeding recursively in the reverse
+order backwards, but before that actually,
+
+178
+00:12:56,250 --> 00:13:01,120
+before I get to that part, right away when I get
+x and y, the thing I'd like to point out that
+
+179
+00:13:01,120 --> 00:13:05,279
+during the forward pass, if you're this
+gate and you get to your values x and y
+
+180
+00:13:05,279 --> 00:13:08,500
+you compute your output z, and there's another
+thing you can compute right away and
+
+181
+00:13:08,500 --> 00:13:10,230
+that is the local gradients on x and y.
+
+182
+00:13:10,230 --> 00:13:14,789
+So I can compute those right away
+because I'm just a gate and I know what
+
+183
+00:13:14,789 --> 00:13:18,009
+I'm performing, like say addition or
+multiplication, so I know the influence that
+
+184
+00:13:18,009 --> 00:13:24,259
+x and y have on my output value, so I can
+compute those guys right away, okay? But then
+
+185
+00:13:24,259 --> 00:13:25,389
+what happens
+
+186
+00:13:25,389 --> 00:13:29,769
+near the end, so the loss gets computed
+and now we're going backwards, I'll eventually learn
+
+187
+00:13:29,769 --> 00:13:32,499
+about what is my influence on
+
+188
+00:13:32,499 --> 00:13:37,839
+the final output of the circuit, the loss.
+So I'll learn what is dL/dz in there.
+
+189
+00:13:37,839 --> 00:13:41,419
+The gradient will flow into me and what I
+have to do is I have to chain that
+
+190
+00:13:41,419 --> 00:13:45,278
+gradient through this recursive case, so
+I have to make sure to chain the
+
+191
+00:13:45,278 --> 00:13:48,778
+gradient through my operation that I performed
+and it turns out that the correct thing
+
+192
+00:13:48,778 --> 00:13:52,068
+to do here by chain rule, really what it's
+saying, is that the correct thing to do is to
+
+193
+00:13:52,068 --> 00:13:56,068
+multiply your local gradient with that
+gradient and that actually gives you the
+
+194
+00:13:56,068 --> 00:13:57,838
+dL/dx that gives you the
+
+195
+00:13:57,839 --> 00:14:02,739
+influence of x on the final output of
+the circuit. So really, chain rule is just
+
+196
+00:14:02,739 --> 00:14:08,229
+this added multiplication. where we take our,
+what I'll call, global gradient of this
+
+197
+00:14:08,229 --> 00:14:12,669
+gate on the output, and we chain it
+through the local gradient, and the same
+
+198
+00:14:12,669 --> 00:14:18,509
+thing goes for y. So it's just a
+multiplication of that guy, that gradient
+
+199
+00:14:18,509 --> 00:14:22,889
+by your local gradient if you're a gate.
+And then remember that these x's and y's
+
+200
+00:14:22,889 --> 00:14:27,229
+they are coming from different gates, right?
+So you end up with recursing
+
+201
+00:14:27,229 --> 00:14:31,899
+this process through the entire computational
+circuit, and so these gates
+
+202
+00:14:31,899 --> 00:14:36,808
+just basically communicate to each other
+the influence on the final loss, so they
+
+203
+00:14:36,808 --> 00:14:39,688
+tell each other, okay if this is a positive
+gradient that means you're positively
+
+204
+00:14:39,688 --> 00:14:43,198
+influencing the loss, if it's a negative
+gradient you're negatively
+
+205
+00:14:43,198 --> 00:14:46,788
+influencing the loss, and these just get all
+multiplied through the circuit by these
+
+206
+00:14:46,788 --> 00:14:51,019
+local gradients and you end up with, and
+this process is called backpropagation.
+
+207
+00:14:51,019 --> 00:14:54,489
+It's a way of computing through a
+recursive application of chain rule
+
+208
+00:14:54,489 --> 00:14:58,399
+through computational graph, the influence
+of every single intermediate value in
+
+209
+00:14:58,399 --> 00:15:02,158
+that graph on the final loss function.
+So we'll see many examples of this
+
+210
+00:15:02,158 --> 00:15:06,918
+throughout the lecture. I'll go into a
+specific example that is a slightly
+
+211
+00:15:06,918 --> 00:15:11,298
+larger and we'll work through it in detail.
+But I don't know if there are any questions at
+
+212
+00:15:11,298 --> 00:15:13,000
+this point that anyone would like to ask.
+Go ahead.
+
+213
+00:15:13,001 --> 00:15:16,000
+What happens if z is used by two other nodes?
+
+214
+00:15:16,001 --> 00:15:19,000
+If z is used by multiple nodes, I'm going to come back to that.
+
+215
+00:15:19,000 --> 00:15:23,537
+You add the gradients. The gradient, the
+correct thing to do is you add them. 
+
+216
+00:15:23,538 --> 00:15:29,928
+So if z is being influenced in multiple places 
+in the circuit, the backward flows will add.
+
+217
+00:15:29,928 --> 00:15:31,539
+I will come back to that point. Go ahead.
+
+218
+00:15:31,539 --> 00:15:53,038
+(Student is asking question) 
+
+219
+00:15:53,039 --> 00:15:59,139
+Yeap. So I think, I would've repeated your question, 
+but you're jumping ahead like 100 slides. 
+
+220
+00:15:59,539 --> 00:16:03,139
+So we're going to get the all of those
+issues and we're going to see, you're
+
+221
+00:16:03,139 --> 00:16:05,769
+going to get what we call vanishing
+gradient problems and so on.
+
+222
+00:16:05,769 --> 00:16:10,669
+We'll see. Okay, let's go through another
+example to make this more concrete.
+
+223
+00:16:10,669 --> 00:16:14,318
+So here we have another circuit. It happens
+to be computing a little two-dimensional
+
+224
+00:16:14,318 --> 00:16:18,179
+sigmoid neuron, but for now don't worry about
+that interpretation. Just think of this
+
+225
+00:16:18,179 --> 00:16:22,849
+as, that's an expression so one-over-
+one-plus-e-to-the-whatever, so the number of
+
+226
+00:16:22,850 --> 00:16:29,000
+inputs here is five, and we're computing that function
+and we have a single output over there, okay?
+
+227
+00:16:29,000 --> 00:16:32,490
+And I've translated that mathematical expression
+into this computational graph form, so
+
+228
+00:16:32,490 --> 00:16:35,769
+we have to recursively from inside out
+compute this expression so we first do
+
+229
+00:16:35,769 --> 00:16:42,129
+all the little w times x's, and then
+we add them all up and then we take a
+
+230
+00:16:42,129 --> 00:16:46,129
+negative of it and then we exponentiate
+that and then we add one and then we
+
+231
+00:16:46,129 --> 00:16:49,769
+finally divide and we get the result of
+the expression. And so what we're going to do
+
+232
+00:16:49,769 --> 00:16:52,409
+now is we're going to backpropagate
+through this expression. We're going to
+
+233
+00:16:52,409 --> 00:16:56,500
+compute what the influence of every
+single input value is on the output of
+
+234
+00:16:56,500 --> 00:16:59,230
+this expression, what is the gradient here.
+Yeap, go ahead.
+
+235
+00:16:59,231 --> 00:17:010,229
+(Student is asking question)
+
+236
+00:17:10,230 --> 00:17:15,229
+So for now, so you're concerned about the 
+interpretation of plus may be in these circles. 
+
+237
+00:17:15,230 --> 00:17:22,039
+For now, let's just assume that this plus is a binary
+plus. It's a binary plus gate, and we have there
+
+238
+00:17:22,039 --> 00:17:26,519
+plus one gate. I'm making up these gates on
+the spot, and we'll see that what is a
+
+239
+00:17:26,519 --> 00:17:31,000
+gate or is not a gate is kind of up to
+you. I'll come back to this point in a bit.
+
+240
+00:17:31,001 --> 00:17:35,639
+So for now, I just like, we have several more
+gates that we're using throughout, and so
+
+241
+00:17:35,640 --> 00:17:38,650
+I'd just like to write out as we go
+through this example several of these
+
+242
+00:17:38,650 --> 00:17:42,720
+derivatives. So we have exponentiation and
+we know for every little local gate what these
+
+243
+00:17:42,720 --> 00:17:49,048
+local gradients are, right? So we can derive
+that using calculus. So e^x derivative is e^x and
+
+244
+00:17:49,048 --> 00:17:52,900
+so on. So these are all the operations
+and also addition and multiplication
+
+245
+00:17:52,900 --> 00:17:56,040
+which I'm assuming that you have
+memorized in terms of what the gradients
+
+246
+00:17:56,040 --> 00:17:58,970
+look like. So we're going to start
+off at the end of the circuit and I've
+
+247
+00:17:58,970 --> 00:18:03,450
+already filled in a 1.00
+in the back because that's how we always
+
+248
+00:18:03,450 --> 00:18:04,890
+start this recursion with a 1.0
+
+249
+00:18:04,891 --> 00:18:10,519
+right, since that's the gradient
+on the identity function. Now we're going
+
+250
+00:18:10,519 --> 00:18:17,849
+to backpropagate through this 1/x
+operation, okay? So the derivative of 1/x
+
+251
+00:18:17,849 --> 00:18:22,048
+the local gradient is -1/(x^2),
+so that 1/x gate
+
+252
+00:18:22,048 --> 00:18:27,119
+during the forward pass received
+input 1.37 and right away that 1/x gate
+
+253
+00:18:27,119 --> 00:18:30,759
+could have computed what the
+local gradient was. The local gradient was
+
+254
+00:18:30,759 --> 00:18:35,048
+-1/(x^2) and now during backpropagation,
+it has to, by chain rule,
+
+255
+00:18:35,048 --> 00:18:40,750
+multiply that local gradient by the
+gradient of it on the final output of the circuit
+
+256
+00:18:40,750 --> 00:18:44,789
+which is easy because it happens
+to be at the end. So what ends up being the
+
+257
+00:18:44,789 --> 00:18:49,349
+expression for the backpropagated
+gradient here, from the 1/x gate?
+
+258
+00:18:54,049 --> 00:19:59,048
+The chain rule always has two pieces: local
+gradient times the gradient from the top
+
+259
+00:18:59,049 --> 00:19:01,300
+or from above.
+
+260
+00:19:04,301 --> 00:19:08,069
+(Student is answering)
+
+261
+00:19:08,301 --> 00:19:12,500
+Um, yeah. Okay. Yeah, so that's correct.
+
+262
+00:19:12,501 --> 00:19:18,069
+So we get -1/x^2, which is the gradient df/dx.
+So that is the local gradient.
+
+263
+00:19:18,069 --> 00:19:23,480
+-1/3.7^2 and then multiplied by 1.0 which is
+
+264
+00:19:23,480 --> 00:19:27,940
+the gradient from above, which is really just 1
+because we've just started, and I'm applying
+
+265
+00:19:27,940 --> 00:19:34,850
+chain rule right away here and the output is
+-0.53. So that's the gradient on
+
+266
+00:19:34,850 --> 00:19:38,798
+that piece of the wire, where this value
+was flowing, okay. So it has a negative
+
+267
+00:19:38,798 --> 00:19:43,889
+effect on the output. And you might expect
+that right, because if you were to
+
+268
+00:19:43,890 --> 00:19:47,850
+increase this value and then it goes
+through a gate of 1/x, then if you
+
+269
+00:19:47,851 --> 00:19:50,939
+increase this, 1/x get smaller, so
+that's why you're seeing a negative
+
+270
+00:19:50,940 --> 00:19:55,620
+gradient, right. So we're going to continue
+backpropagation here. The next gate
+
+271
+00:19:55,621 --> 00:19:58,400
+in the circuit, it's adding a constant of 1,
+
+272
+00:19:58,400 --> 00:20:01,048
+so the local gradient, if you look at
+
+273
+00:20:01,048 --> 00:20:06,960
+adding a constant to a value, the
+gradient on x is just 1, right,
+
+274
+00:20:06,961 --> 00:20:13,169
+from basic calculus. And so the chained
+gradient here that we continue along the wire
+
+275
+00:20:13,169 --> 00:20:27,868
+will be...
+(Student is answering)
+
+276
+00:20:17,869 --> 00:20:22,940
+We have a local gradient, which is
+1, times the gradient from above the
+
+277
+00:20:22,940 --> 00:20:28,590
+gate, which it has just learned is -0.53, okay?
+So -0.53 continues along the
+
+278
+00:20:28,590 --> 00:20:34,709
+wire unchanged. And intuitively that
+makes sense right, because this value
+
+279
+00:20:34,710 --> 00:20:38,319
+floats and it has some influence on the
+final circuit and now, if you're
+
+280
+00:20:38,319 --> 00:20:42,798
+adding 1, then its influence, its rate
+of change, its slope towards the final
+
+281
+00:20:42,798 --> 00:20:46,970
+value doesn't change. If you increase
+this by some amount, the effect at the
+
+282
+00:20:46,970 --> 00:20:51,548
+end will be the same, because the rate of
+change doesn't change through the +1 gate.
+
+283
+00:20:51,548 --> 00:20:57,859
+It's just a constant offset, okay? We continue
+derivation here. So the gradient of e^x is
+
+284
+00:20:57,859 --> 00:21:01,599
+e^x, so to continue backpropagation
+we're going to perform,
+
+285
+00:21:01,599 --> 00:21:05,000
+so this gate saw input of -1.
+
+286
+00:21:05,000 --> 00:21:08,329
+It right away could have computed its
+local gradient, and now it knows that the
+
+287
+00:21:08,329 --> 00:21:12,259
+gradient from above is -0.53.
+So to continue backpropagation
+
+288
+00:21:12,259 --> 00:21:15,000
+here and apply chain rule, we would receive...
+
+289
+00:21:15,000 --> 00:21:17,400
+(Student is answering)
+
+290
+00:21:17,400 --> 00:21:20,000
+Okay, so these are most of
+the rhetorical questions so I'm
+
+291
+00:21:20,000 --> 00:21:25,119
+not sure, but yeah, basically
+e^(-1) which is the e^x,
+
+292
+00:21:25,119 --> 00:21:30,569
+the x input to this exp gate times the chain rule,
+right, so the gradient from above is -0.53
+
+293
+00:21:30,569 --> 00:21:35,269
+so we keep multiplying that on. So what
+is the effect on me and what do I have an
+
+294
+00:21:35,269 --> 00:21:39,069
+effect on the final end of the circuit,
+those are being always multiplied. So we
+
+295
+00:21:39,069 --> 00:21:46,859
+get -0.2 at this point. So now we
+have a *(-1) gate. So what
+
+296
+00:21:46,859 --> 00:21:50,279
+ends up happening, what happens to the
+gradient when you do a times -1 in the
+
+297
+00:21:50,279 --> 00:21:53,139
+computational graph?
+
+298
+00:21:53,139 --> 00:21:57,139
+It flips around, right? Because we have
+basically, a constant multiply of input
+
+299
+00:21:57,140 --> 00:22:02,038
+which happened to be a constant of
+-1, so 1 * -1
+
+300
+00:22:02,038 --> 00:22:05,548
+gave us -1 in the forward pass,
+and so now we have to
+
+301
+00:22:05,548 --> 00:22:09,569
+multiply by a, that's the local gradient,
+times the gradient from above which is -0.2
+
+302
+00:22:09,569 --> 00:22:14,879
+so we end up with just +0.2 now.
+So now we're continuing backpropagation
+
+303
+00:22:14,880 --> 00:22:21,110
+We're backpropagating '+' and this '+' operation
+has multiple inputs here, the gradient,
+
+304
+00:22:21,110 --> 00:22:25,599
+the local gradient for the plus gate is 1
+and 1, so what ends up happening to,
+
+305
+00:22:25,599 --> 00:22:27,359
+what gradients flow along the output wires?
+
+306
+00:22:42,359 --> 00:22:48,089
+So the plus gate has a local gradient on all
+of its inputs always will be just one, right, because
+
+307
+00:22:48,089 --> 00:22:53,769
+if you just have a function, you know,
+x+y, then for that function
+
+308
+00:22:53,769 --> 00:22:58,109
+the gradient on either x or y is just one
+and so what you end up getting is just
+
+309
+00:22:58,109 --> 00:23:03,619
+1 * 0.2. And so, in fact for a
+plus gate, always you see the same fact
+
+310
+00:23:03,619 --> 00:23:07,469
+where the local gradient of all of its
+inputs is 1, and so whatever gradient it
+
+311
+00:23:07,470 --> 00:23:11,289
+gets from above, it just always
+distributes gradient equally to all of
+
+312
+00:23:11,289 --> 00:23:14,339
+its inputs, because in the chain rule,
+they'll get multiplied and when you multiply by 1
+
+313
+00:23:14,339 --> 00:23:18,129
+something remains unchanged. So a '+'
+gate, it's kind of like a gradient
+
+314
+00:23:18,130 --> 00:23:22,170
+distributor, where if something flows in
+from the top, it will just spread out all
+
+315
+00:23:22,170 --> 00:23:26,560
+the gradients equally to all of its
+children. And so we've already received
+
+316
+00:23:26,560 --> 00:23:32,139
+one of the inputs is gradient 0.2 here
+on the very final output of the circuit
+
+317
+00:23:32,140 --> 00:23:35,970
+and so this influence has been computed
+through a series of applications of
+
+318
+00:23:35,970 --> 00:23:42,450
+chain rule along the way. There was another
+plus gate that I've skipped over, and so this
+
+319
+00:23:42,450 --> 00:23:47,090
+0.2 kind of distributes to both
+0.2 0.2 equally so we've already done a
+
+320
+00:23:47,090 --> 00:23:51,750
+plus gate, and there's a multiply gate there,
+and so now we're going to backpropagate
+
+321
+00:23:51,750 --> 00:23:55,940
+through that multiply operation.
+And so the local grad, so the,
+
+322
+00:23:55,940 --> 00:24:02,450
+so what will be the gradients for w0 and x0?
+What will be the gradient for w0, specifically?
+
+323
+00:24:02,450 --> 00:24:06,450
+(Student is answering)
+
+324
+00:24:06,450 --> 00:24:17,059
+Did someone say 0? 0 will be wrong. It will be,
+so the gradient w1 will be, w0 sorry, will be
+
+325
+00:24:17,059 --> 00:24:24,389
+-1 * 0.2. Good. And the gradient on x0 will
+be, there is a bug, by the way, in the slide
+
+326
+00:24:24,390 --> 00:24:27,840
+that I just noticed like few minutes
+before I actually created the class.
+
+327
+00:24:27,840 --> 00:24:34,289
+Created the, started the class. So you see
+0.39 there it should be 0.4. It's
+
+328
+00:24:34,289 --> 00:24:37,480
+because of a bug in the visualization
+because I'm truncating at 2-decimal
+
+329
+00:24:37,480 --> 00:24:41,190
+digits, but anyways, basically that should be
+0.4 because the way you get that
+
+330
+00:24:41,190 --> 00:24:45,400
+is 2 * 0.2 gives you 0.4
+just like I've written out over there.
+
+331
+00:24:45,400 --> 00:24:50,980
+So that's what the output should be there.
+Okay, so we've backpropagated this
+
+332
+00:24:50,980 --> 00:24:55,190
+circuit here and we've backpropagated through
+this expression and so you might imagine in
+
+333
+00:24:55,190 --> 00:24:59,289
+our actual downstream applications,
+we'll have data and all the parameters as inputs
+
+334
+00:24:59,289 --> 00:25:03,450
+the loss function is at the top at the
+end, so we'll do forward pass to evaluate
+
+335
+00:25:03,450 --> 00:25:06,440
+the loss function and then we'll backpropagate
+through every piece of
+
+336
+00:25:06,440 --> 00:25:10,450
+computation we've done along the way, and
+we'll backpropagate through every gate to
+
+337
+00:25:10,450 --> 00:25:14,150
+get our inputs, and backpropagate just
+means apply chain rule many many times
+
+338
+00:25:14,150 --> 00:25:18,220
+and we'll see how that is implemented in a bit.
+Sorry, did you have a question?
+
+339
+00:25:18,220 --> 00:25:20,520
+(Student is asking question)
+
+340
+00:25:20,521 --> 00:25:23,021
+Oh yes, so I'm going to skip
+that because it's the same.
+
+341
+00:25:23,021 --> 00:25:27,821
+So I'm going to skip the other times gate. 
+Any other questions at this point?
+
+342
+00:25:27,821 --> 00:25:32,969
+(Student is asking question)
+
+343
+00:25:32,969 --> 00:25:37,200
+That's right. so the costs of forward and
+backward propagation are roughly equal.
+
+344
+00:25:37,200 --> 00:25:44,100
+(Student is asking question)
+
+345
+00:25:44,100 --> 00:25:45,869
+Well, it should be, it almost always ends
+
+346
+00:25:45,869 --> 00:25:49,500
+up being basically equal when you look
+at timings, usually the backward pass is slightly
+
+347
+00:25:49,500 --> 00:25:52,000
+slower, but yeah.
+
+348
+00:25:55,000 --> 00:25:58,710
+Okay, so let's see, one thing I
+wanted to point out, before we move on, is that
+
+349
+00:25:58,710 --> 00:26:02,350
+the setting of these gates, like these
+gates are arbitrary, so one thing I could
+
+350
+00:26:02,350 --> 00:26:06,509
+have done, for example, is, some of you
+may know this, I can collapse these gates
+
+351
+00:26:06,509 --> 00:26:10,549
+into one gate if I wanted to. For example,
+There is something called the sigmoid function
+
+352
+00:26:10,549 --> 00:26:14,069
+which has that particular form, so a sigma of x
+which is the sigmoid function
+
+353
+00:26:14,069 --> 00:26:19,460
+computes 1/(1+e^(-x))
+and so I could have rewritten that
+
+354
+00:26:19,460 --> 00:26:22,650
+expression and I could have collapsed all of
+those gates that made up the sigmoid
+
+355
+00:26:22,650 --> 00:26:27,769
+gate into a single sigmoid gate. And so there's a
+sigmoid gate here, and I could have done
+
+356
+00:26:27,769 --> 00:26:32,440
+that in a single go, sort of, and what I
+would have had to do, if I wanted to have
+
+357
+00:26:32,440 --> 00:26:37,980
+that gate, is I need to compute an
+expression for how this, so what is the
+
+358
+00:26:37,980 --> 00:26:41,670
+local gradient for the sigmoid gate
+basically? So what is the gradient on the
+
+359
+00:26:41,670 --> 00:26:44,470
+sigmoid gate on its input and I have to go
+through some math which I'm not going to
+
+360
+00:26:44,470 --> 00:26:46,980
+go into detail but you end up with that
+expression over there.
+
+361
+00:26:46,980 --> 00:26:51,750
+It ends up being (1-sigmoid(x)) * sigmoid(x).
+That's the local gradient and that
+
+362
+00:26:51,750 --> 00:26:55,450
+allows me to now, put this piece into a
+computational graph, because once I know
+
+363
+00:26:55,450 --> 00:26:58,819
+how to compute the local gradient
+everything else is defined just through
+
+364
+00:26:58,819 --> 00:27:02,389
+chain rule and multiply everything
+together. So we can backpropagate
+
+365
+00:27:02,390 --> 00:27:06,720
+through this sigmoid gate now, and the way
+that would look like is, the input to the
+
+366
+00:27:06,720 --> 00:27:11,750
+sigmoid gate was 1.0, that's what
+went into the sigmoid gate, and 0.73 went out.
+
+367
+00:27:11,750 --> 00:27:18,759
+So 0.73 is sigma of x, okay? And now we want
+the local gradient which is, as we've seen
+
+368
+00:27:18,759 --> 00:27:22,559
+from the math that I performed there
+(1 - sigma(x)) * sigma(x)
+
+369
+00:27:22,559 --> 00:27:26,450
+so you get, sigma(x) is 0.73, multiplying (1 - 0.73)
+
+370
+00:27:26,450 --> 00:27:31,170
+that's the local gradient and then times,
+we happen to be at the end
+
+371
+00:27:31,170 --> 00:27:34,170
+of the circuit, so times 1.0,
+which I'm not even writing.
+
+372
+00:27:34,170 --> 00:27:36,330
+So we end up with 0.2. And of course we
+
+373
+00:27:36,330 --> 00:27:37,649
+get the same answer
+
+374
+00:27:37,650 --> 00:27:42,220
+0.2, as we received before, 0.2,
+because calculus works, but basically we
+
+375
+00:27:42,220 --> 00:27:44,480
+could have broken up
+this expression down and
+
+376
+00:27:44,480 --> 00:27:47,450
+did one piece at a time or we could just
+have a single sigmoid gate and that's
+
+377
+00:27:47,450 --> 00:27:51,569
+kind of up to us at what level of hierarchy
+do we break these expressions
+
+378
+00:27:51,569 --> 00:27:52,339
+and so you'd like to
+
+379
+00:27:52,339 --> 00:27:55,829
+intuitively, cluster these expressions
+into single gates if it's very efficient
+
+380
+00:27:55,829 --> 00:28:59,800
+or easy to derive the local gradients
+because then those become your pieces.
+
+381
+00:28:00,000 --> 00:28:05,819
+(Student is asking question)
+
+382
+00:28:05,819 --> 00:28:10,529
+Yes. So the question is, do libraries typically
+do that? Do they worry about, you know
+
+383
+00:28:10,529 --> 00:28:14,058
+what's easy to or convenient to
+compute and the answer is yeah, I would say so,
+
+384
+00:28:14,058 --> 00:28:17,480
+So if you noticed that there are some
+piece of operation you'd like to do over
+
+385
+00:28:17,480 --> 00:28:20,798
+and over again, and it has a very simple
+local gradient, then that's something very
+
+386
+00:28:20,798 --> 00:28:24,900
+appealing to actually create a single
+unit out of, and we'll see some of those
+
+387
+00:28:24,900 --> 00:28:30,230
+examples actually int a bit I think.
+Okay, I'd like to also point out that once you,
+
+388
+00:28:30,230 --> 00:28:32,490
+the reason I like to think about these
+computational graphs, is it really helps
+
+389
+00:28:32,490 --> 00:28:36,289
+your intuition to think about how gradients
+flow in a neural network. It's not just,
+
+390
+00:28:36,289 --> 00:28:39,369
+you don't want this to be a black
+box to you, you want to understand
+
+391
+00:28:39,369 --> 00:28:43,959
+intuitively how this happens, and you
+start to develop after a while of
+
+392
+00:28:43,960 --> 00:28:47,850
+looking at computational graphs intuitions
+about how these gradients flow, and this
+
+393
+00:28:47,850 --> 00:28:52,029
+by the way, helps you debug some issues like,
+say, we'll go to vanishing gradient problem
+
+394
+00:28:52,029 --> 00:28:55,950
+it's much easier to understand exactly
+what's going wrong in your optimization
+
+395
+00:28:55,950 --> 00:28:59,250
+if you understand how gradients flow
+in networks. It will help you debug these
+
+396
+00:28:59,250 --> 00:29:02,740
+networks much more efficiently. And so
+some intuitions for example, we already
+
+397
+00:29:02,740 --> 00:29:07,609
+saw the add gate. It has a local
+gradient of 1 to all of its inputs, so
+
+398
+00:29:07,609 --> 00:29:11,279
+it's just a gradient distributor. That's
+like a nice way to think about it
+
+399
+00:29:11,279 --> 00:29:14,548
+whenever you have a plus operation
+anywhere in your score function or your
+
+400
+00:29:14,548 --> 00:29:18,740
+ConvNet or anywhere else. It just
+distributes gradients equally. The max gate is
+
+401
+00:29:18,740 --> 00:29:23,009
+instead, a gradient router, and the way this
+works is, if you look at the expression
+
+402
+00:29:23,009 --> 00:29:30,970
+like, we have. Great, these markers don't
+work. So if you have a very simple binary
+
+403
+00:29:30,970 --> 00:29:38,410
+expression of max(x, y), so this is a gate.
+Then, the gradient on x and y, if you
+
+404
+00:29:38,410 --> 00:29:42,570
+think about it, the gradient on the larger
+one of your inputs, whichever one was larger
+
+405
+00:29:42,570 --> 00:29:46,389
+the gradient on that guy is one and all this,
+and the smaller one has a gradient of 0.
+
+406
+00:29:46,390 --> 00:29:50,630
+And intuitively, that's because if one
+of these was smaller, then wiggling it has no
+
+407
+00:29:50,630 --> 00:29:53,220
+effect on the output because the other
+guy is larger and that's what ends up
+
+408
+00:29:53,220 --> 00:29:57,009
+propagating through the gate. 
+So you end up with a gradient of 1 on the
+
+409
+00:29:57,009 --> 00:30:03,140
+larger one of the inputs, and so that's
+why max gate is a gradient router. If I'm
+
+410
+00:30:03,140 --> 00:30:06,420
+a max gate and I have received several
+inputs, one of them was the largest of
+
+411
+00:30:06,420 --> 00:30:09,550
+all of them and that's the value that I
+propagated through the circuit.
+
+412
+00:30:09,550 --> 00:30:12,909
+At backpropagation time, I'm just going to
+receive my gradient from above and I'm
+
+413
+00:30:12,910 --> 00:30:16,590
+going to route it to whoever was my
+largest input. So it's a gradient router.
+
+414
+00:30:17,000 --> 00:30:22,569
+And the multiply gate is a gradient switcher.
+Actually I don't think that's a very good
+
+415
+00:30:22,569 --> 00:30:26,960
+way to look at it, but I'm referring to
+the fact that it's not actually
+
+416
+00:30:26,960 --> 00:30:28,150
+nevermind about that part.
+
+417
+00:30:29,560 --> 00:30:30,860
+Go ahead.
+
+418
+00:30:30,860 --> 00:30:36,650
+(Student is asking question)
+
+419
+00:30:36,650 --> 00:30:39,150
+So your question is what happens if the two
+
+420
+00:30:39,150 --> 00:30:41,470
+inputs are equal when
+you go through max gate.
+
+421
+00:30:44,150 --> 00:30:46,150
+Yeah, what happens?
+
+422
+00:30:46,150 --> 00:30:48,470
+(Student is answering)
+
+423
+00:30:48,470 --> 00:30:50,000
+Yeah, you pick one. Yeah.
+
+424
+00:30:52,300 --> 00:30:53,470
+Yeah, I don't think it's
+
+425
+00:30:53,470 --> 00:30:57,559
+correct to distributed to all of them. I
+think you'd have to pick one.
+
+426
+00:30:58,259 --> 00:31:01,990
+But that basically never
+happens in actual practice.
+
+427
+00:31:05,559 --> 00:31:07,990
+Okay, so max gradient here, I actually
+
+428
+00:31:07,990 --> 00:31:13,019
+have an example. So z, here, was larger
+than w, so only z has an influence on
+
+429
+00:31:13,019 --> 00:31:16,839
+the output of this max gate, right?
+So when 2 flows into the max gate
+
+430
+00:31:16,839 --> 00:31:20,879
+it gets routed to z, and w gets a 0 gradient
+because its effect on the circuit is
+
+431
+00:31:20,880 --> 00:31:25,360
+nothing. There is 0, because when you
+change it, it doesn't matter when you change
+
+432
+00:31:25,360 --> 00:31:29,689
+it, because z is the larger value
+going through the computational graph.
+
+433
+00:31:29,690 --> 00:31:33,100
+I have another note that is related to
+backpropagation which we already
+
+434
+00:31:33,100 --> 00:31:36,490
+addressed through a question. I just wanted
+to briefly point out with a terribly
+
+435
+00:31:36,490 --> 00:31:40,440
+bad looking figure that if you have
+these circuits and sometimes you have a
+
+436
+00:31:40,440 --> 00:31:43,330
+value that branches out into a circuit
+and is used in multiple parts of the
+
+437
+00:31:43,330 --> 00:31:47,179
+circuit, the correct thing to do by
+multivariate chain rule, is to actually
+
+438
+00:31:47,180 --> 00:31:51,110
+add up the contributions at the operation.
+
+439
+00:31:51,110 --> 00:31:55,110
+So gradients add when they backpropagate
+
+440
+00:31:55,110 --> 00:32:00,009
+backwards through the circuit. If they
+ever flow, they add up in these backward flow
+
+441
+00:32:00,009 --> 00:32:04,879
+All right. We're going to go into
+implementation very soon. I'll just take some
+
+442
+00:32:04,880 --> 00:32:05,700
+more questions.
+
+443
+00:32:05,700 --> 00:32:08,820
+(Student is asking question)
+
+444
+00:32:08,820 --> 00:32:11,620
+Thank you for the question. The question
+is, is there ever, like a loop in these
+
+445
+00:32:11,620 --> 00:32:15,839
+graphs. There will never be loops, so there
+are never any loops. You might think that
+
+446
+00:32:15,839 --> 00:32:18,589
+if you use a recurrent neural network,
+that there are loops in there
+
+447
+00:32:18,589 --> 00:32:21,658
+but there are actually no loops because what
+we'll do is we'll take a recurrent neural
+
+448
+00:32:21,659 --> 00:32:26,230
+network and we will unfold it through time
+steps and this will all become, there
+
+449
+00:32:26,230 --> 00:32:30,530
+will never be a loop in the unfolded graph where
+we've copied pasted that small recurrent net piece
+
+450
+00:32:30,530 --> 00:32:31,259
+over time.
+
+451
+00:32:31,259 --> 00:32:35,059
+You'll see that more when we actually
+get into it but these are always DAGs
+
+452
+00:32:35,059 --> 00:32:36,338
+There are no loops.
+
+453
+00:32:38,059 --> 00:32:39,538
+Okay, awesome.
+
+454
+00:32:39,538 --> 00:32:42,220
+So let's look at the implementation of how this
+is actually implemented in practice and
+
+455
+00:32:42,220 --> 00:32:46,990
+I think it will help make this more
+concrete as well. So we always have these
+
+456
+00:32:46,990 --> 00:32:48,938
+graphs, computational graphs.
+
+457
+00:32:48,938 --> 00:32:52,038
+These are the best way to
+think about structuring neural networks.
+
+458
+00:32:52,038 --> 00:32:56,929
+And so what we end up with is, all these
+gates that we're going to see a bit, but
+
+459
+00:32:56,929 --> 00:33:00,059
+on top of the gates, there something's that
+needs to maintain connectivity structure
+
+460
+00:33:00,059 --> 00:33:03,490
+of this entire graph, what gates are
+connected to each other. And so usually
+
+461
+00:33:03,490 --> 00:33:09,710
+that's handled by a graph or a net object,
+usually a net, and the net object has these
+
+462
+00:33:09,710 --> 00:33:13,679
+two main pieces, which is the forward
+and the backward piece. And this is just pseudo
+
+463
+00:33:13,679 --> 00:33:19,929
+code, so this won't run, but basically,
+roughly the idea is that in the forward pass
+
+464
+00:33:19,929 --> 00:33:23,759
+we're iterating over all the gates in the circuit
+that, and they're sorted in topological
+
+465
+00:33:23,759 --> 00:33:27,980
+order. What that means is that all the
+inputs must come to every node before
+
+466
+00:33:27,980 --> 00:33:32,099
+the output can be consumed. So these are just
+ordered from left to right and we're just
+
+467
+00:33:32,099 --> 00:33:35,969
+forwarding, we're calling a forward on every
+single gate along the way so we iterate
+
+468
+00:33:35,970 --> 00:33:39,600
+over that graph and we just go forward in
+every single piece and this net object will
+
+469
+00:33:39,600 --> 00:33:43,189
+just make sure that happens in the
+proper connectivity pattern. In backward
+
+470
+00:33:43,190 --> 00:33:46,620
+pass, we're going in the exact reversed
+order and we're calling backward on
+
+471
+00:33:46,620 --> 00:33:49,709
+every single gate and these gates will
+end up communicating gradients through each
+
+472
+00:33:49,710 --> 00:33:53,429
+other and they all get chained up and
+computing the analytic gradient at the back.
+
+473
+00:33:53,429 --> 00:33:57,860
+So really a net object is a very thin
+wrapper around all these gates, or as we
+
+474
+00:33:57,860 --> 00:34:01,879
+will see they're called layers, layers or
+gates. I'm going to use those interchangeably
+
+475
+00:34:01,880 --> 00:34:05,700
+and they're just very thin wrappers
+around connectivity structure of these
+
+476
+00:34:05,700 --> 00:34:09,369
+gates and calling a forward and backward
+function on them. And then let's look at
+
+477
+00:34:09,369 --> 00:34:12,950
+a specific example of one of the gates
+and how this might be implemented.
+
+478
+00:34:12,950 --> 00:34:16,759
+And this is not just a pseudo code. 
+This is actually more like correct
+
+479
+00:34:16,760 --> 00:34:18,730
+implementation. Something like this might run
+
+480
+00:34:18,730 --> 00:34:23,769
+at the end. So let's consider a multiply
+gate and how it could be implemented.
+
+481
+00:34:23,769 --> 00:34:27,690
+A multiply gate, in this case, is just a
+binary multiply, so it receives two inputs
+
+482
+00:34:27,690 --> 00:34:33,780
+x and y. It computes their multiplication,
+z = x * y and it returns z.
+
+483
+00:34:33,780 --> 00:34:38,950
+And all these gates must basically satisfied this
+API of a forward call and a backward call. How
+
+484
+00:34:38,950 --> 00:34:42,529
+do you behave in a forward pass, and how
+do you behave in a backward pass. And
+
+485
+00:34:42,530 --> 00:34:46,019
+in a forward pass, we just compute whatever. 
+In a backward pass, we eventually end up
+
+486
+00:34:46,019 --> 00:34:52,639
+learning about what is our gradient on
+the final loss. So dL/dz is what
+
+487
+00:34:52,639 --> 00:34:55,628
+we learn. That's represented in this
+variable dz, and right now
+
+488
+00:34:55,628 --> 00:35:00,639
+everything here is scalars, so x, y, z are
+numbers here. dz is also a number
+
+489
+00:35:00,639 --> 00:35:03,639
+telling the influence on the end of the circuit.
+
+490
+00:35:03,639 --> 00:35:07,799
+And what this gate is in charge 
+of in this backward pass is
+
+491
+00:35:07,800 --> 00:35:11,550
+performing the little piece of chain rule.
+So what we have to compute is how do you
+
+492
+00:35:11,550 --> 00:35:14,550
+chain this gradient dz into your inputs x and y.
+
+493
+00:35:14,550 --> 00:35:16,550
+In other words, we have to compute
+dx and dy and we have to
+
+494
+00:35:16,550 --> 00:35:19,820
+returned those in the backward pass, And then
+the computational graph will make sure
+
+495
+00:35:19,820 --> 00:35:23,720
+that these get routed properly to all
+the other gates. And if there are any
+
+496
+00:35:23,720 --> 00:35:28,820
+edges that add up, the computational graph
+might add all those gradients together.
+
+497
+00:35:30,220 --> 00:35:35,650
+Okay, so how would we implement
+the dx and dy? So for example, what is
+
+498
+00:35:35,650 --> 00:35:40,300
+dx in this case? What would it be equal to,
+the implementation?
+
+499
+00:35:43,300 --> 00:35:49,460
+y * dz. Great. And, so y * dz.
+Additional point to make here by the way,
+
+500
+00:35:49,460 --> 00:35:53,659
+note that I've added some lines in the forward
+pass. We have to remember these values of
+
+501
+00:35:53,659 --> 00:35:57,509
+x and y, because we end up using them in the
+backward pass, so I'm assigning them to a
+
+502
+00:35:57,510 --> 00:36:01,000
+'self.' because I need to remember
+what x y are because I need access to
+
+503
+00:36:01,000 --> 00:36:04,949
+them in my backward pass. In general, in
+backpropagation, when we build these,
+
+504
+00:36:04,949 --> 00:36:09,359
+when you actually do forward pass, every
+single gate must remember the inputs in
+
+505
+00:36:09,360 --> 00:36:13,430
+any kind of intermediate calculations that it has
+performed that it needs to do, that needs
+
+506
+00:36:13,430 --> 00:36:17,069
+access to in the backward pass. So basically
+when we end up running these networks at
+
+507
+00:36:17,070 --> 00:36:20,050
+runtime, just always keep in mind that as
+you're doing this forward pass, a huge
+
+508
+00:36:20,050 --> 00:36:22,890
+amount of stuff gets cached in your
+memory, and that all has to stick around
+
+509
+00:36:22,890 --> 00:36:25,909
+because during backpropagation, you might
+need access to some of those variables.
+
+510
+00:36:25,909 --> 00:36:30,779
+And so, your memory ends up ballooning up
+during the forward pass, and then in backward pass,
+
+511
+00:36:30,780 --> 00:36:33,690
+it gets all consumed and we need all those
+intermediates to actually compute the
+
+512
+00:36:33,690 --> 00:36:36,000
+proper backward pass. So that's...
+
+513
+00:36:36,000 --> 00:36:41,089
+(Student is asking question)
+
+514
+00:36:41,089 --> 00:36:43,189
+Yes, so if you don't, if you know you
+don't want to do backward pass,
+
+515
+00:36:43,189 --> 00:36:45,289
+then you can get rid of
+many of these things and you
+
+516
+00:36:45,289 --> 00:36:49,710
+don't have to compute, you don't need to cache
+them. So you can save memory for sure.
+
+517
+00:36:49,710 --> 00:36:54,110
+But I don't think most implementations
+actually worriy about that. I don't
+
+518
+00:36:54,110 --> 00:36:58,280
+think there's a lot of logic that deals with that.
+Usually we end up remembering it anyway.
+
+519
+00:37:00,280 --> 00:37:05,870
+(Student is asking question)
+
+520
+00:37:05,870 --> 00:37:09,369
+I see. Yes, so I think if you're in the
+embedded device for example, and you worry
+
+521
+00:37:09,369 --> 00:37:11,949
+really about your memory constraints, this is
+something that you might take advantage
+
+522
+00:37:11,949 --> 00:37:15,539
+of. If you know that a neural network only
+has to run in test time, then you might
+
+523
+00:37:15,539 --> 00:37:18,750
+want to make sure to go into the code to
+make sure nothing gets cached in case
+
+524
+00:37:18,750 --> 00:37:22,030
+you want to do a backward pass.
+Questions. Yes.
+
+525
+00:37:22,030 --> 00:37:30,990
+(Student is asking question)
+
+526
+00:37:30,990 --> 00:37:33,130
+You're saying if we remember the local gradients in
+
+527
+00:37:33,130 --> 00:37:39,250
+the forward pass, then we don't have to
+remember the other intermediates?
+
+528
+00:37:39,250 --> 00:37:45,269
+I think that might only be the case in
+some simple expressions like this one. I'm
+
+529
+00:37:45,269 --> 00:37:49,170
+not actually sure if that's true in general.
+But I mean, you're in charge of, remember
+
+530
+00:37:49,170 --> 00:37:54,950
+whatever you need to, perform the
+backward pass, and on a gate-by-gate basis.
+
+531
+00:37:54,950 --> 00:37:58,509
+You can remember whatever
+you feel like. It has lower footprint and so on.
+
+532
+00:37:58,510 --> 00:38:04,420
+You can be clever with that. Okay, so just to give
+you guy's example of what this looks like in
+
+533
+00:38:04,420 --> 00:38:08,250
+practice, we're going to look at specific
+examples, say, in Torch. Torch is a deep
+
+534
+00:38:08,250 --> 00:38:11,480
+learning framework, which we might
+go into a bit near the end of the class.
+
+535
+00:38:11,480 --> 00:38:16,750
+Some of you might end up using for
+your projects. If you go into the Github repo
+
+536
+00:38:16,750 --> 00:38:20,320
+for Torch, and you'll look at,
+basically, it's just a giant collection
+
+537
+00:38:20,320 --> 00:38:24,580
+of these layer objects and these are the
+gates. Layers, gates, the same thing. So there's
+
+538
+00:38:24,580 --> 00:38:27,429
+all these layers. That's really what a
+deep learning framework is. It's just a
+
+539
+00:38:27,429 --> 00:38:31,559
+whole bunch of layers and a very thin
+computational graph thing that keeps track
+
+540
+00:38:31,559 --> 00:38:36,420
+of all the layer connectivity. And so really,
+the image to have in mind is all these
+
+541
+00:38:36,420 --> 00:38:42,639
+things are your Lego blocks, and then we're
+building up these computational graphs out of
+
+542
+00:38:42,639 --> 00:38:44,829
+your Lego blocks, out of the layers.
+You're putting them together in various
+
+543
+00:38:44,829 --> 00:38:47,549
+ways depending on what you want to
+achieve, so you end building all
+
+544
+00:38:47,550 --> 00:38:51,519
+kinds of stuff. So that's how you work
+with neural networks. So every library is
+
+545
+00:38:51,519 --> 00:38:54,809
+just a whole set of layers that you
+might want to compute, and every layer is
+
+546
+00:38:54,809 --> 00:38:58,840
+just implementing a small function piece, and
+that function piece knows how to do a
+
+547
+00:38:58,840 --> 00:39:02,670
+forward and it knows how to do a backward.
+So just to view the specific example, let's
+
+548
+00:39:02,670 --> 00:39:10,150
+look at the MulConstant layer in
+Torch. The MulConstant layer performs
+
+549
+00:39:10,150 --> 00:39:16,039
+just a scaling by a scalar. So it takes
+some tensor X. So this is not a scalar
+
+550
+00:39:16,039 --> 00:39:19,300
+but it's actually like an array of
+numbers basically, because when we
+
+551
+00:39:19,300 --> 00:39:22,410
+actually work with these, we do a lot of
+vectorized operation so we receive a tensor
+
+552
+00:39:22,410 --> 00:39:28,289
+which is really just a n-dimensional
+array, and we scale it by a constant. And you
+
+553
+00:39:28,289 --> 00:39:31,980
+can see that this layer actually just has 40
+lines. There's some initialization stuff.
+
+554
+00:39:31,980 --> 00:39:35,940
+This is Lua, by the way, if this is
+looking some foreign to you, but there's
+
+555
+00:39:35,940 --> 00:39:40,510
+initialization, where you actually
+pass in that a that you want to use as
+
+556
+00:39:40,510 --> 00:39:44,630
+your scaling, and then during the
+forward pass which they call updateOutput
+
+557
+00:39:44,630 --> 00:39:49,170
+in a forward pass all they do is
+they just multiply aX and return it. And
+
+558
+00:39:49,170 --> 00:39:53,760
+in the backward pass which they call
+updateGradInput, there's an if statement
+
+559
+00:39:53,760 --> 00:39:56,510
+here but really when you look at these
+three lines, they're most important. You can
+
+560
+00:39:56,510 --> 00:39:59,690
+see that all it's doing is it's copying into a
+variable gradInput
+
+561
+00:39:59,690 --> 00:40:03,539
+which it needs to compute. That's your gradient
+that you're passing up. The gradInput is,
+
+562
+00:40:03,539 --> 00:40:08,309
+you're copying gradOutput. gradOutput is
+your gradient on final loss.
+
+563
+00:40:08,309 --> 00:40:11,989
+You're copying that over into gradInput
+and you're multiplying by the scalar,
+
+564
+00:40:11,989 --> 00:40:15,629
+which is what you should be doing
+because your local gradient is just a
+
+565
+00:40:15,630 --> 00:40:19,980
+and so you take the output you have, you
+take the gradient from above and you just
+
+566
+00:40:19,980 --> 00:40:23,150
+scale it by a, which is what these three
+lines are doing. And that's your gradInput
+
+567
+00:40:23,150 --> 00:40:27,849
+and that's what you return. So
+that's one of the hundreds of layers
+
+568
+00:40:27,849 --> 00:40:32,110
+that are in Torch. We can also look
+at examples in Caffe. Caffe is also a
+
+569
+00:40:32,110 --> 00:40:36,140
+deep learning framework specifically for
+images that you might be working with. Again, if
+
+570
+00:40:36,140 --> 00:40:39,690
+you go into the layers directory in GitHub,
+you just see all these layers. All of them implement
+
+571
+00:40:39,690 --> 00:40:43,490
+the forward backward API. So just to give
+you an example, there's a sigmoid layer in Caffe.
+
+572
+00:40:43,490 --> 00:40:51,269
+So sigmoid layer takes a blob. So Caffe likes to
+call these tensors blobs. So it takes a
+
+573
+00:40:51,269 --> 00:40:54,219
+blob. It's just an n-dimensional array of
+numbers, and it passes it
+
+574
+00:40:54,219 --> 00:40:57,949
+elementwise through a sigmoid function. And so
+it's computing in a forward pass a
+
+575
+00:40:57,949 --> 00:41:04,379
+sigmoid, which you can see there. Let me use my
+pointer. Okay, so there, its calling, so a lot of
+
+576
+00:41:04,380 --> 00:41:07,840
+this stuff is just boilerplate, getting
+pointers to all the data, and then we
+
+577
+00:41:07,840 --> 00:41:11,730
+have a bottom blob, and we're calling a
+sigmoid function on the bottom and
+
+578
+00:41:11,730 --> 00:41:14,829
+that's just a sigmoid function right there.
+So that's what we compute. And in the
+
+579
+00:41:14,829 --> 00:41:18,719
+backward pass, some boilerplate stuff, but
+really what's important is we need to
+
+580
+00:41:18,719 --> 00:41:23,369
+compute the gradient times the chain
+rule here, so that's what you see in this
+
+581
+00:41:23,369 --> 00:41:26,150
+line. That's where the magic happens
+where we take the diff,
+
+582
+00:41:26,150 --> 00:41:32,048
+so they call the gradients diffs. And you
+compute the bottom diff is the top diff
+
+583
+00:41:32,048 --> 00:41:36,869
+times this piece which is really the,
+that's the local gradient, so this is
+
+584
+00:41:36,869 --> 00:41:41,960
+chain rule happening right here through
+that multiplication. So, and that's it. So every
+
+585
+00:41:41,960 --> 00:41:45,179
+single layer just a forward backward API
+and then you have a computational graph
+
+586
+00:41:45,179 --> 00:41:52,288
+on top or a net object that keeps track of all the
+connectivity. Any questions about some of
+
+587
+00:41:52,289 --> 00:42:00,849
+these implementations and so on? Go ahead.
+
+588
+00:41:54,000 --> 00:42:00,849
+(Student is asking question)
+
+589
+00:42:00,849 --> 00:42:04,759
+Yes, thank you. So the question is, do we have to
+go through forward and backward for every update.
+
+590
+00:42:04,759 --> 00:42:09,259
+The answer is yes, because when you 
+want to do update, you need the gradient,
+
+591
+00:42:09,259 --> 00:42:11,849
+and so you need to do forward
+on your sample minibatch.
+
+592
+00:42:11,849 --> 00:42:15,559
+You do a forward. Right away you do a backward.
+And now you have your analytic gradient.
+
+593
+00:42:15,559 --> 00:42:19,369
+And now I can do an update, where I take my
+analytic gradient and I change my weights a tiny
+
+594
+00:42:19,369 --> 00:42:24,960
+bit in the direction, the negative direction
+of your gradient. So forward computes
+
+595
+00:42:24,960 --> 00:42:28,858
+the loss, backward computes your gradient,
+and then the update uses the gradient to
+
+596
+00:42:28,858 --> 00:42:33,000
+increment your weights a bit. So that's what keeps
+happening in the loop. When you train a neural
+
+597
+00:42:33,000 --> 00:42:36,318
+network that's all that's happening. Forward,
+backward, update. Forward, backward, update.
+
+598
+00:42:36,318 --> 00:42:38,808
+We'll see that in a bit. Go ahead.
+
+599
+00:42:38,808 --> 00:42:43,808
+(Student is asking question)
+
+600
+00:42:44,808 --> 00:42:47,008
+You're asking about a for-loop.
+
+601
+00:42:49,208 --> 00:42:51,808
+Oh, is there a for-loop here?
+I didn't even notice. Okay.
+
+602
+00:42:51,809 --> 00:42:57,160
+Yeah, they have a for-loop. Yes, so you'd like
+this to be vectorized and that actually...
+
+603
+00:42:57,160 --> 00:43:03,679
+Because this is C++, so I think they just do it.
+Go for it.
+
+604
+00:43:06,679 --> 00:43:10,899
+Yeah, so this is a CPU implementation by
+the way. I should mention that this is a
+
+605
+00:43:10,900 --> 00:43:14,599
+CPU implementation of a sigmoid layer.
+There's a second file that implements the
+
+606
+00:43:14,599 --> 00:43:19,420
+sigmoid layer on GPU and that's CUDA code.
+And so that's a separate file. It
+
+607
+00:43:19,420 --> 00:43:22,280
+would be sigmoid.cu or
+something like that. I'm not showing you that.
+
+608
+00:43:23,580 --> 00:43:30,349
+Any questions? Okay, great. So one point I'd like to
+make is, we'll be of course working with
+
+609
+00:43:30,349 --> 00:43:33,519
+vectors, so these things flowing along our
+graphs are not just scalars. They're going
+
+610
+00:43:33,519 --> 00:43:38,449
+to be entire vectors. And so nothing
+changes. The only thing that is different
+
+611
+00:43:38,449 --> 00:43:43,529
+now since these are vectors, x, y, and z are
+vectors, is that this local gradient
+
+612
+00:43:43,530 --> 00:43:47,530
+which before used to be just a scalar,
+now they're in general, for general
+
+613
+00:43:47,530 --> 00:43:51,290
+expressions, they're full Jacobian matrices.
+And so Jacobian matrix is this
+
+614
+00:43:51,290 --> 00:43:54,670
+two-dimensional matrix and basically
+tells you what is the influence of every
+
+615
+00:43:54,670 --> 00:43:58,010
+single element in x on every single
+element of z,
+
+616
+00:43:58,010 --> 00:44:01,880
+and that's what Jacobian matrix
+stores, and the gradient is the same
+
+617
+00:44:01,880 --> 00:44:10,960
+expression as before, but now, say here,
+dz/dx is a vector and dL/dz is... sorry.
+
+618
+00:44:11,560 --> 00:44:16,079
+dL/dz is a vector and dz/dx is an
+entire Jacobian matrix, so you end up with
+
+619
+00:44:16,079 --> 00:44:20,130
+an entire matrix-vector multiply to
+actually chain the gradient backwards.
+
+620
+00:44:20,130 --> 00:44:29,130
+(Student is asking question)
+
+621
+00:44:31,530 --> 00:44:36,380
+No. So I'll come back to this point in a bit.
+You never actually end up forming the full
+
+622
+00:44:36,380 --> 00:44:40,119
+Jacobian. You'll never actually do this
+matrix multiply most of the time. This is
+
+623
+00:44:40,119 --> 00:44:43,730
+just a general way of looking at, you
+know, arbitrary function, and I need to
+
+624
+00:44:43,730 --> 00:44:46,260
+keep track of this. And I think that
+these two are actually out of order
+
+625
+00:44:46,260 --> 00:44:49,569
+because dz/dx is the Jacobian
+which should be on the left side, so
+
+626
+00:44:49,569 --> 00:44:53,859
+I think that's a mistaken slide because
+this should be a matrix-vector multiply.
+
+627
+00:44:53,859 --> 00:44:57,618
+So I'll show you why you don't actually
+need to ever perform those Jacobians. So let's
+
+628
+00:44:57,619 --> 00:45:02,119
+work with a specific example that is
+relatively common in neural networks.
+
+629
+00:45:02,119 --> 00:45:06,869
+Suppose we have this nonlinearity max(0, x)
+So really what this operation
+
+630
+00:45:06,869 --> 00:45:11,068
+is doing is it's receiving a vector, say
+4096 numbers, which is a typical thing
+
+631
+00:45:11,068 --> 00:45:12,308
+you might want to do.
+
+632
+00:45:12,309 --> 00:45:14,630
+4096 numbers, real value, come in
+
+633
+00:45:14,630 --> 00:45:19,630
+and you're computing an element-wise
+thresholding at 0, so anything that is lower
+
+634
+00:45:19,630 --> 00:45:24,680
+than 0 gets clamped to 0, and that's your
+function that you're computing. And so output
+
+635
+00:45:24,680 --> 00:45:28,588
+vector is of the same dimension. So
+the question here I'd like to ask is
+
+636
+00:45:28,588 --> 00:45:32,068
+what is the size of the
+Jacobian matrix for this layer?
+
+637
+00:45:37,588 --> 00:45:40,268
+4096 by 4096. In principle,
+
+638
+00:45:40,268 --> 00:45:45,018
+every single number in here could have
+influenced every single number in there.
+
+639
+00:45:45,018 --> 00:45:49,459
+But that's not the case necessarily, right?
+So the second question is, so this
+
+640
+00:45:49,460 --> 00:45:52,949
+is a huge matrix, 16 million numbers,
+but why would you never form it?
+
+641
+00:45:52,949 --> 00:45:54,719
+What does the Jacobian actually look like?
+
+642
+00:45:54,719 --> 00:45:59,019
+(Student is asking question)
+
+643
+00:45:59,019 --> 00:46:02,719
+No, Jacobian will always be a matrix
+because every one of these 4096
+
+644
+00:46:02,719 --> 00:46:09,949
+could have influenced every... It is, so the
+Jacobian is still a giant 4096 by 4096
+
+645
+00:46:09,949 --> 00:46:14,558
+matrix, but has special structure, right?
+And what is that special structure?
+
+646
+00:46:14,558 --> 00:46:17,558
+(Student is answering)
+
+647
+00:46:17,559 --> 00:46:20,420
+Yeah, so this Jacobian is huge.
+
+648
+00:46:21,259 --> 00:46:27,420
+So it's 4096 by 4096 matrix, but
+there are only elements on the diagonal
+
+649
+00:46:27,420 --> 00:46:33,700
+because this is an element-wise operation,
+and moreover, they're not just 1's, but
+
+650
+00:46:33,700 --> 00:46:38,129
+for whichever element that was less than 0,
+it was clamped to 0, so some of these 1's
+
+651
+00:46:38,130 --> 00:46:42,798
+actually are zeros, in whichever elements
+had a lower-than-zero value during the
+
+652
+00:46:42,798 --> 00:46:47,429
+forward pass. And so the Jacobian would
+just be almost an identity matrix but
+
+653
+00:46:47,429 --> 00:46:52,250
+some of them are actually zero. So you
+never actually would want to form the
+
+654
+00:46:52,250 --> 00:46:55,429
+full Jacobean because that's silly and
+so you never actually want to carry out
+
+655
+00:46:55,429 --> 00:47:00,808
+this operation as a matrix vector
+multiply, because of their special structure
+
+656
+00:47:00,809 --> 00:47:04,150
+that we want to take advantage of. And so
+in particular, the gradient, the backward
+
+657
+00:47:04,150 --> 00:47:09,269
+pass for this operation is very very
+easy because you just want to look at
+
+658
+00:47:09,269 --> 00:47:14,159
+all the dimensions where your input was
+less than zero and you want to kill the
+
+659
+00:47:14,159 --> 00:47:17,210
+gradient in those dimensions. You want to
+set the gradient to 0 in those dimensions.
+
+660
+00:47:17,210 --> 00:47:21,650
+So you take the grad output here, and
+whichever numbers were less than zero,
+
+661
+00:47:21,650 --> 00:47:25,910
+just set them to 0. Set those gradients to 0
+and then you continue backward pass.
+
+662
+00:47:26,209 --> 00:47:30,209
+So very simple operations in the
+end in terms of efficiency.
+
+663
+00:47:30,209 --> 00:47:36,809
+(Student is asking question)
+
+664
+00:47:36,809 --> 00:47:37,300
+That's right.
+
+665
+00:47:37,300 --> 00:47:45,930
+(Student is asking question)
+
+666
+00:47:45,930 --> 00:47:51,830
+So the question is, the commication between the 
+gates is always just vectors. That's right. 
+
+667
+00:47:51,830 --> 00:47:55,940
+So this Jacobian, if you wanted to, you can form
+that but that's internal to you inside the gate.
+
+668
+00:47:55,940 --> 00:47:59,670
+And you can use that to do backprop, but
+what's going back to other gates, they
+
+669
+00:47:59,670 --> 00:48:02,870
+only care about the gradient vector.
+
+670
+00:48:02,870 --> 00:48:09,070
+(Student is asking question)
+
+671
+00:48:09,070 --> 00:48:12,070
+Yes, so the question is, unless
+you end up having multiple outputs,
+
+672
+00:48:12,070 --> 00:48:15,070
+because then for each output,
+we have to do this, so yeah.
+
+673
+00:48:15,070 --> 00:48:17,380
+So we'll never actually run into that case
+
+674
+00:48:17,380 --> 00:48:20,430
+because we almost always have a single
+output, scalar value at the end
+
+675
+00:48:20,430 --> 00:48:24,129
+because we're interested in loss
+functions. So we just have a single
+
+676
+00:48:24,130 --> 00:48:27,318
+number at the end that we're interested
+in computing gradients with respect to. If we had
+
+677
+00:48:27,318 --> 00:48:30,949
+multiple outputs, then we have to keep
+track of all of those as well
+
+678
+00:48:30,949 --> 00:48:35,769
+in parallel when we do the backpropagation.
+But we just have scalar value loss
+
+679
+00:48:35,769 --> 00:48:38,580
+function so we don't have to worry about that.
+
+680
+00:48:40,269 --> 00:48:46,080
+Okay, makes sense? So I want
+to also make the point that actually
+
+681
+00:48:46,080 --> 00:48:51,230
+4096 dimensions is not even crazy. Usually
+we use minibatches, so say, minibatch of a
+
+682
+00:48:51,230 --> 00:48:54,929
+100 elements going through at the same
+time, and then you end up with 100
+
+683
+00:48:54,929 --> 00:48:59,038
+4096-dimensional vectors that are all
+coming in parallel, but all the examples
+
+684
+00:48:59,039 --> 00:49:02,539
+in the minibatch are processed independently of
+each other in parallel, and so this Jacobian matrix
+
+685
+00:49:02,539 --> 00:49:08,869
+really ends up being 400 million, 400,000 by 400,000.
+So huge so you never form these,
+
+686
+00:49:08,869 --> 00:49:14,160
+basically. And you take, you take care to
+actually take advantage of the sparsity
+
+687
+00:49:14,160 --> 00:49:17,538
+structure in the Jacobian and you hand
+code operations, so you don't actually write
+
+688
+00:49:17,539 --> 00:49:25,819
+fully generalized chain rule inside
+any gate implementation. Okay cool. So I'd like
+
+689
+00:49:25,819 --> 00:49:30,788
+to point out that in your assignment, you'll be
+writing SVMs and Softmax and so on, and I just kind
+
+690
+00:49:30,789 --> 00:49:33,680
+of would like to give you a hint on the design
+of how you actually should approach this
+
+691
+00:49:33,680 --> 00:49:39,769
+problem. What you should do is just think
+about it as a backpropagation, even if
+
+692
+00:49:39,769 --> 00:49:44,108
+you're doing this for linear classification
+optimization. So roughly, your structure
+
+693
+00:49:44,108 --> 00:49:50,048
+should look something like this where...
+again, stage your computation in units that
+
+694
+00:49:50,048 --> 00:49:53,960
+you know the local gradient of and then
+do backprop when you actually evaluate these
+
+695
+00:49:53,960 --> 00:49:57,679
+gradients in your assignment. So in the
+top, your code will look something like
+
+696
+00:49:57,679 --> 00:49:59,679
+this where we don't have any graph
+structure because you're doing
+
+697
+00:49:59,679 --> 00:50:04,038
+everything inline. So no crazy edges
+or anything like that that you have to do.
+
+698
+00:50:04,039 --> 00:50:07,200
+You will do that in the second assignment.
+You'll actually come up with a graph
+
+699
+00:50:07,200 --> 00:50:10,509
+object and you'll implement your layers. But in
+the first assignment, you're just doing it inline
+
+700
+00:50:10,510 --> 00:50:15,579
+just straight up vanilla setup. And so
+compute your scores based on W and X.
+
+701
+00:50:15,579 --> 00:50:21,798
+Compute these margins which are max of 0
+and the score differences, compute the
+
+702
+00:50:21,798 --> 00:50:26,239
+loss, and then do backprop. And in
+particular, I would really advise you to
+
+703
+00:50:26,239 --> 00:50:30,949
+have this intermediate scores that you
+create. It's a matrix. And then compute the
+
+704
+00:50:30,949 --> 00:50:34,769
+gradient on scores before you compute
+the gradient on your weights. And so
+
+705
+00:50:34,769 --> 00:50:40,179
+chain, use chain rule here. Otherwise, you might
+be tempted to try to just derive W, the
+
+706
+00:50:40,179 --> 00:50:43,798
+gradient on W equals, and then implement
+that and that's an unhealthy way of
+
+707
+00:50:43,798 --> 00:50:47,349
+approaching the problem. So stage your
+computation and do backprop through this
+
+708
+00:50:47,349 --> 00:50:49,900
+scores and that will help you out.
+
+709
+00:50:51,500 --> 00:50:52,800
+Okay. cool.
+
+710
+00:50:54,300 --> 00:50:59,570
+So, let's see. Summary so far.
+Neural networks are hopelessly large,
+
+711
+00:50:59,570 --> 00:51:01,570
+so we end up in this
+computational structures and these
+
+712
+00:51:01,570 --> 00:51:05,470
+intermediate nodes, forward backward API
+for both the nodes and also for the
+
+713
+00:51:05,470 --> 00:51:08,869
+graph structure. And the graph structure is
+usually a very thin wrapper around all these
+
+714
+00:51:08,869 --> 00:51:12,059
+layers and it handles all the
+communication between them. And this
+
+715
+00:51:12,059 --> 00:51:16,380
+communication is always along like
+vectors being passed around. In practice,
+
+716
+00:51:16,380 --> 00:51:19,289
+when we write these implementations, what
+we're passing around are these
+
+717
+00:51:19,289 --> 00:51:23,079
+n-dimensional tensors. Really what that
+means is just an n-dimensional array.
+
+718
+00:51:23,079 --> 00:51:28,059
+So like an numpy array. Those are what goes
+between the gates, and then internally, every single
+
+719
+00:51:28,059 --> 00:51:33,529
+gate knows what to do in the forward and
+the backward pass. Okay, so at this point, I'm
+
+720
+00:51:33,530 --> 00:51:37,690
+going to end with backpropagation and
+I'm going to go into neural networks. So
+
+721
+00:51:37,690 --> 00:51:40,390
+any questions before we move on from
+backprop? Go ahead.
+
+722
+00:51:40,390 --> 00:51:51,860
+(Student is asking a question)
+
+723
+00:51:51,860 --> 00:51:55,530
+The summation inside Li = blah?
+Yes, there is a sum there.
+
+724
+00:51:55,530 --> 00:52:00,130
+So you want that to be vectorized operation that
+you... Yeah so basically, the challenge in your
+
+725
+00:52:00,130 --> 00:52:03,130
+assignment almost is,
+how do you make sure that you do all
+
+726
+00:52:03,130 --> 00:52:06,750
+this efficiently nicely with matrix vector operations
+in numpy, so that's going to be some of the
+
+727
+00:52:06,750 --> 00:52:09,750
+brain teaser stuff that you guys are
+going to have to do.
+
+728
+00:52:09,750 --> 00:52:14,250
+(Student is asking a question)
+
+729
+00:52:14,250 --> 00:52:20,030
+Yes, so it's up to you what you want your gates
+to be like, and what you want them to be.
+
+730
+00:52:20,030 --> 00:52:22,490
+(Student is asking a question)
+
+731
+00:52:22,490 --> 00:52:24,490
+Yeah, I don't think you'd want to do that.
+
+732
+00:52:25,490 --> 00:52:30,739
+Yeah, I'm not sure. Maybe that works. I don't know.
+But it's up to you to design this and to
+
+733
+00:52:30,739 --> 00:52:38,609
+backprop through. Yeah, so that's fun. Okay.
+So we're going to go to neural networks. This is
+
+734
+00:52:38,610 --> 00:52:44,010
+exactly what they look like. So you'll be
+implementing these, and this is just what happens
+
+735
+00:52:44,010 --> 00:52:46,770
+when you search on Google Images for
+neural networks. This is I think the first
+
+736
+00:52:46,770 --> 00:52:51,590
+result or something like that. So let's
+look at neural networks. And before we dive
+
+737
+00:52:51,590 --> 00:52:55,100
+into neural networks actually, I'd like
+to do it first without all the brain
+
+738
+00:52:55,100 --> 00:52:58,329
+stuff. So forget that they're neural. Forget
+that they have any relation whatsoever
+
+739
+00:52:58,329 --> 00:53:03,170
+to a brain. They don't, but forget if you
+thought that they did, that they do. Let's
+
+740
+00:53:03,170 --> 00:53:07,309
+just look at score functions. Well
+before, we saw that f=Wx is what
+
+741
+00:53:07,309 --> 00:53:11,079
+we've been working with so far. But now
+as I said, we're going to start to make
+
+742
+00:53:11,079 --> 00:53:14,590
+that f more complex. And so if you wanted
+to use a neural network then you're
+
+743
+00:53:14,590 --> 00:53:20,309
+going to change that equation to this. So
+this is a two-layer neural network, and
+
+744
+00:53:20,309 --> 00:53:24,820
+that's what it looks like, and it's just
+a more complex mathematical expression of x.
+
+745
+00:53:24,820 --> 00:53:30,230
+And so what's happening here is, you
+receive your input x, and you
+
+746
+00:53:30,230 --> 00:53:32,369
+multiply it by a matrix, just like we did before.
+
+747
+00:53:32,369 --> 00:53:36,619
+Now, what's coming next, what comes next
+is a nonlinearity or activation function,
+
+748
+00:53:36,619 --> 00:53:39,710
+and we're going to go into several choices
+that you might make for these. In this
+
+749
+00:53:39,710 --> 00:53:43,800
+case, I'm using the thresholding at 0 as an
+activation function. So basically, we're
+
+750
+00:53:43,800 --> 00:53:47,780
+doing matrix multiply, we threshold
+everything negative to 0, and then we do
+
+751
+00:53:47,780 --> 00:53:52,240
+one more matrix multiply, and that gives us
+our scores. And so if I was to draw this,
+
+752
+00:53:52,240 --> 00:53:58,169
+say in case of CIFAR-10, with 3072 numbers
+going in, those are the pixel values,
+
+753
+00:53:58,170 --> 00:54:02,110
+and before, we just went one single matrix
+multiply to scores. We went right away
+
+754
+00:54:02,110 --> 00:54:05,899
+to 10 numbers. But now, we get to go
+through this intermediate representation
+
+755
+00:54:05,900 --> 00:54:13,019
+of hidden state. We'll call them hidden layers. 
+So hidden vector h of hundred numbers, say
+
+756
+00:54:13,019 --> 00:54:16,849
+or whatever you want your size of the neural
+network to be. So this is a hyperparameter,
+
+757
+00:54:16,849 --> 00:54:21,109
+that's, say, a hundred, and we go through
+this intermediate representation. So matrix
+
+758
+00:54:21,109 --> 00:54:24,319
+multiply gives us hundred
+numbers, threshold at zero, and
+
+759
+00:54:24,320 --> 00:54:28,559
+then one more matrix multiply to get the scores.
+And since we have more numbers, we have
+
+760
+00:54:28,559 --> 00:54:33,820
+more wiggle to do more interesting
+things. So a more, one particular example
+
+761
+00:54:33,820 --> 00:54:36,330
+of something interesting you might want
+to, you might think that a neural network
+
+762
+00:54:36,330 --> 00:54:40,210
+could do, is going back to this
+example of interpreting linear
+
+763
+00:54:40,210 --> 00:54:45,690
+classifiers on CIFAR-10, and we saw that the
+car class has this red car that tries to
+
+764
+00:54:45,690 --> 00:54:51,280
+merge all the modes of different cars
+facing in different directions. And so in
+
+765
+00:54:51,280 --> 00:54:57,980
+this case, one single layer, one single
+linear classifier had to go across all
+
+766
+00:54:57,980 --> 00:55:02,250
+those modes, and we couldn't deal with
+for example, cars of different colors. That
+
+767
+00:55:02,250 --> 00:55:05,190
+wasn't very natural to do. But now we
+have hundred numbers in this
+
+768
+00:55:05,190 --> 00:55:08,289
+intermediate, and so you might imagine
+for example, that one of those numbers
+
+769
+00:55:08,289 --> 00:55:11,539
+could be just picking up on red
+car facing forward. It's just classifying,
+
+770
+00:55:11,539 --> 00:55:14,750
+is there a red car facing
+forward. Another one could be red car
+
+771
+00:55:14,750 --> 00:55:16,280
+facing slightly to the left,
+
+772
+00:55:16,280 --> 00:55:20,650
+red car facing slightly to the right, and
+those elements of h would only become
+
+773
+00:55:20,650 --> 00:55:24,358
+positive if they find that thing in the image,
+
+774
+00:55:24,358 --> 00:55:28,029
+otherwise, they stay at zero. And so
+another h might look for green cars
+
+775
+00:55:28,030 --> 00:55:31,180
+or yellow cars or whatever else in
+different orientations. So now we can
+
+776
+00:55:31,180 --> 00:55:35,669
+have a template for all these different
+modes. And so these neurons turn on or
+
+777
+00:55:35,670 --> 00:55:41,869
+off if they find the thing they're looking
+for. Car of some specific type, and then
+
+778
+00:55:41,869 --> 00:55:46,660
+this W2 matrix can sum across all
+those little car templates. So now we
+
+779
+00:55:46,660 --> 00:55:50,719
+have like say twenty card templates of
+what cars could look like, and now, to compute
+
+780
+00:55:50,719 --> 00:55:54,149
+the score of car classifier, there's an
+additional matrix multiply, so we have a choice
+
+781
+00:55:54,150 --> 00:55:58,700
+of doing a weighted sum over them. And so if
+anyone of them turn on, then through my
+
+782
+00:55:58,700 --> 00:56:02,269
+weighted sum, with positive weights
+presumably, I would be adding up and
+
+783
+00:56:02,269 --> 00:56:07,358
+getting a higher score. And so now I can
+have this multimodal car classifier
+
+784
+00:56:07,358 --> 00:56:13,098
+through this additional hidden layer in between
+there. So that's a handwavy reason for why
+
+785
+00:56:13,099 --> 00:56:14,720
+these would do something more interesting.
+
+786
+00:56:15,520 --> 00:56:16,509
+Was there a question? Yeah.
+
+787
+00:56:16,509 --> 00:56:26,350
+(Student is asking a question)
+
+788
+00:56:26,350 --> 00:56:32,509
+So the question is, if h had less than 10 units, would
+it be inferior to a linear classifier? I think that's... 
+
+789
+00:56:33,200 --> 00:56:39,509
+that's actually not obvious to me. It's an interesting
+question. I think... you could make that work.
+
+790
+00:56:39,509 --> 00:56:40,509
+I think you could make it work.
+
+791
+00:56:43,509 --> 00:56:47,509
+Yeah, I think that would actually work. Someone
+should try that for extra points in the assignment.
+
+792
+00:56:47,509 --> 00:56:49,509
+So you'll have a section on the
+assignment do something fun or extra
+
+793
+00:56:49,510 --> 00:56:53,220
+and so you get to come up with whatever you
+think is interesting experiment and we'll
+
+794
+00:56:53,220 --> 00:56:56,699
+give you some bonus points. So that's good
+candidate for something you might
+
+795
+00:56:56,699 --> 00:56:59,659
+want to investigate, whether that works or not.
+
+796
+00:56:59,659 --> 00:57:00,929
+Any other questions? Go ahead.
+
+797
+00:57:01,329 --> 00:57:11,329
+(Student is asking a question)
+
+798
+00:57:11,329 --> 00:57:13,589
+Sorry, I don't think I understood the question.
+
+799
+00:57:13,589 --> 00:57:26,989
+(Student is asking question)
+
+800
+00:57:26,989 --> 00:57:28,000
+I see.
+
+801
+00:57:28,900--> 00:57:32,389
+So you're really asking about the layout of the
+h vector and how it gets allocated over the
+
+802
+00:57:32,389--> 00:57:34,989
+the different modes of the dataset
+and I don't have a good
+
+803
+00:57:34,989 --> 00:57:39,500
+answer for that. Since we're going
+to train this fully with backpropagation,
+
+804
+00:57:39,500 --> 00:57:42,690
+I think it's like naive to think that
+there will be exact template for, say a
+
+805
+00:57:42,690 --> 00:57:46,539
+left car facing, red car facing left. You
+probably want to find that. You'll find
+
+806
+00:57:46,539 --> 00:57:50,690
+these kind of like mixes, and weird
+things, intermediates, and so on.
+
+807
+00:57:50,690 --> 00:57:54,390
+So this neural network will come in and it will
+optimally find a way to truncate your data
+
+808
+00:57:54,390 --> 00:57:55,630
+with its linear boundaries
+
+809
+00:57:55,630 --> 00:57:59,809
+and these weights will all get adjusted
+just to make it come out right. So it's
+
+810
+00:57:59,809 --> 00:58:03,809
+really hard to say. It will all become
+tangled up I think. Go ahead.
+
+811
+00:58:03,809 --> 00:58:09,500
+(Student is asking question)
+
+812
+00:58:09,500 --> 00:58:10,579
+That's right. So that's the
+
+813
+00:58:10,579 --> 00:58:14,579
+size of a hidden layer, and it's a hyperparameter.
+We get to choose that. So I chose
+
+814
+00:58:14,579 --> 00:58:18,719
+hundred. Usually that's going to be, usually,
+you'll see that with neural networks. We'll go into
+
+815
+00:58:18,719 --> 00:58:22,739
+this a lot, but usually you want them to
+be as big as possible, as it fits in your
+
+816
+00:58:22,739 --> 00:58:27,659
+computer and so on, so more is better.
+We'll go into that. Go ahead.
+
+817
+00:58:27,659 --> 00:58:33,659
+(Student is asking question)
+
+818
+00:58:33,659 --> 00:58:38,639
+So you're asking, do we always take max of 0 and h,
+and we don't, and I'll get, it's like five slides
+
+819
+00:58:38,639 --> 00:58:44,359
+away. So I'm going to go into neural networks.
+I guess maybe I should preemtively just go
+
+820
+00:58:44,360 --> 00:58:48,390
+ahead and take questions near the end.
+If you wanted this to be a three-layer
+
+821
+00:58:48,390 --> 00:58:50,940
+neural network by the way, there's a very
+simple way in which we just extend
+
+822
+00:58:50,940 --> 00:58:53,710
+this, right? So we just keep continuing
+the same pattern where we have all these
+
+823
+00:58:53,710 --> 00:58:57,159
+intermediate hidden nodes, and then we
+can keep making our network deeper and
+
+824
+00:58:57,159 --> 00:58:59,750
+deeper, and you can compute more
+interesting functions because you're
+
+825
+00:58:59,750 --> 00:59:03,369
+giving yourself more time to compute
+something interesting in a handwavy way.
+
+826
+00:59:03,369 --> 00:59:09,559
+Now, one other slide I wanted to flash is
+that, training a two-layer neural network,
+
+827
+00:59:09,559 --> 00:59:12,690
+I mean, it's actually quite simple when
+it comes down to it. So this is a slide
+
+828
+00:59:12,690 --> 00:59:17,349
+borrowed from a blog post I found, and
+basically it suffices roughly eleven lines of
+
+829
+00:59:17,349 --> 00:59:21,980
+Python to implement a two layer neural
+network, doing binary classification on
+
+830
+00:59:21,980 --> 00:59:27,570
+what is this, two dimensional data. So you
+have a two dimensional data matrix X. You
+
+831
+00:59:27,570 --> 00:59:32,580
+have, sorry it's three dimensional. And you
+have binary labels for y, and then
+
+832
+00:59:32,580 --> 00:59:36,579
+syn0 syn1 are your weight matrices
+weight1 weight2. And so I think they're
+
+833
+00:59:36,579 --> 00:59:41,150
+called syn for synapse but I'm not sure. And
+then this is the optimization loop here
+
+834
+00:59:41,150 --> 00:59:46,269
+and what you're seeing here, I should
+use my pointer for more, what you're
+
+835
+00:59:46,269 --> 00:59:50,139
+seeing here is we're computing the first
+layer activations, but this is using
+
+836
+00:59:50,139 --> 00:59:54,069
+a sigmoid nonlinearity not a max of 0 and X.
+And we'll go into a bit of what
+
+837
+00:59:54,070 --> 00:59:58,650
+these nonlinearities might be. So sigmoid is
+one form. It's computing the first layer,
+
+838
+00:59:58,650 --> 01:00:03,059
+and then it's computing second layer, and then
+it's computing here right away the backward
+
+839
+01:00:03,059 --> 01:00:08,130
+pass. So this is the l2_delta. It's the gradient
+on l2, the gradient on l1, and the
+
+840
+01:00:08,130 --> 01:00:13,390
+gradient, and this is an update here.
+So right away he's doing an update at
+
+841
+01:00:13,390 --> 01:00:17,150
+the same time as during the final piece
+of backprop here where he formulating the
+
+842
+01:00:17,150 --> 01:00:22,519
+gradient on the W, and right away he's
+adding to gradient here. And so really
+
+843
+01:00:22,519 --> 01:00:24,630
+eleven lines suffice to train a
+neural network to do binary
+
+844
+01:00:24,630 --> 01:00:29,710
+classification. The reason that this loss
+might look slightly different from what
+
+845
+01:00:29,710 --> 01:00:33,500
+you've seen right now, is that this is a
+logistic regression loss. So you saw a
+
+846
+01:00:33,500 --> 01:00:37,159
+generalization of it which is a softmax
+classifier into multiple dimensions. But
+
+847
+01:00:37,159 --> 01:00:40,149
+this is basically a logistic loss being
+updated here and you can go through this
+
+848
+01:00:40,150 --> 01:00:43,500
+in more detail by yourself. But the
+logistic regression loss look slightly
+
+849
+01:00:43,500 --> 01:00:50,539
+different and that's being, that's inside
+there. But otherwise, yes, so this is not too
+
+850
+01:00:50,539 --> 01:00:55,320
+crazy of a computation, and very few
+lines of code suffice to actually train
+
+851
+01:00:55,320 --> 01:00:58,900
+these networks. Everything else is fluff.
+How do you make it efficient, how do
+
+852
+01:00:58,900 --> 01:01:03,019
+you... there's a cross-validation pipeline
+that you need to have and all this stuff
+
+853
+01:01:03,019 --> 01:01:07,050
+that goes on top to actually give these
+large code bases, but the kernel of it is
+
+854
+01:01:07,050 --> 01:01:11,019
+quite simple. We compute these layers, do
+forward pass, we do backward pass, we do an
+
+855
+01:01:11,019 --> 01:01:14,540
+update, we keep iterating this over and over again.
+Go ahead.
+
+856
+01:01:14,540 --> 01:01:16,240
+(Student is asking a question)
+
+857
+01:01:16,240 --> 01:01:18,840
+The random function is creating
+your first initial random
+
+858
+01:01:18,840 --> 01:01:24,170
+weights, so you need to start somewhere
+so you generate a random W.
+
+859
+01:01:24,170 --> 01:01:29,150
+Okay. Now I wanted to mention that you'll also
+be training a two-layer neural network
+
+860
+01:01:29,150 --> 01:01:32,070
+in this class, so you'll be doing
+something very similar to this but
+
+861
+01:01:32,070 --> 01:01:34,950
+you're not using logistic regression and
+you might have different activation
+
+862
+01:01:34,950 --> 01:01:39,149
+functions. But again, just my advice to
+you when you implement this is, stage
+
+863
+01:01:39,150 --> 01:01:42,789
+your computation into these intermediate
+results, and then do proper
+
+864
+01:01:42,789 --> 01:01:46,909
+backpropagation into every intermediate
+result. So you might have, you compute
+
+865
+01:01:46,909 --> 01:01:54,460
+your... Let's see. You compute, you receive these
+weight matrices and also the biases. I don't
+
+866
+01:01:54,460 --> 01:01:59,940
+believe you have biases actually in your SVM and in
+your softmax, but here you'll have biases. So
+
+867
+01:01:59,940 --> 01:02:03,269
+take your weight matrices in the biases,
+compute the first hidden layer, compute your scores,
+
+868
+01:02:03,269 --> 01:02:08,429
+compute your loss, and then do backward
+pass. So backprop into scores, then
+
+869
+01:02:08,429 --> 01:02:13,739
+backprop into the weights at the second
+layer, and backprop into this h1 vector,
+
+870
+01:02:13,739 --> 01:02:18,849
+and then through h1, backprop into the first
+weight matrices and the first biases. Okay, so do
+
+871
+01:02:18,849 --> 01:02:22,929
+proper backpropagation here. Otherwise, if
+you try to right away, just say, what
+
+872
+01:02:22,929 --> 01:02:26,739
+is dW1, what is the gradient on W1. If you
+just try to make it a single expression
+
+873
+01:02:26,739 --> 01:02:31,099
+for it, it will be way too large and you'll have
+headaches. So do it through a series of
+
+874
+01:02:31,099 --> 01:02:32,619
+steps and back-propagation.
+
+875
+01:02:32,619 --> 01:02:36,119
+That's just a hint.
+
+876
+01:02:36,119 --> 01:02:39,940
+Okay. So now I'd like to, so that was the
+presentation of neural networks without
+
+877
+01:02:39,940 --> 01:02:43,940
+all the brain stuff and it looks fairly
+simple. So now we're going to make it
+
+878
+01:02:43,940 --> 01:02:47,740
+slightly more insane by folding in all
+kinds of like motivations, mostly
+
+879
+01:02:47,740 --> 01:02:51,219
+historical about like how this came 
+about that it's related to brain at all.
+
+880
+01:02:51,219 --> 01:02:54,939
+And so, we have neural networks and we
+have neurons inside these neural
+
+881
+01:02:54,940 --> 01:02:59,440
+networks. So this is what neurons look like.
+This is just what happens when you search on
+
+882
+01:02:59,440 --> 01:03:03,800
+image search 'neurons', so there you go. Now
+your actual biological neurons don't
+
+883
+01:03:03,800 --> 01:03:09,030
+look like this. Unfortunately, they look
+more like that. And so a neuron,
+
+884
+01:03:09,030 --> 01:03:11,880
+just very briefly, just to give you an
+idea about where this is all coming from
+
+885
+01:03:11,880 --> 01:03:17,220
+you have the cell body or a soma as people like
+to call it, and it's got all these dendrites
+
+886
+01:03:17,220 --> 01:03:21,049
+that are connected to other neurons. So
+there's a cluster of other neurons and
+
+887
+01:03:21,050 --> 01:03:25,450
+cell bodies over here. And dendrites are
+really, these appendages that listen to
+
+888
+01:03:25,450 --> 01:03:30,869
+them. So this is your inputs to a neuron,
+and then it's got a single axon that
+
+889
+01:03:30,869 --> 01:03:35,839
+comes out of the neuron that carries the
+output of the computation that this neurons performs.
+
+890
+01:03:35,840 --> 01:03:40,579
+So usually, usually you have this
+neuron, receives inputs. If many of them
+
+891
+01:03:40,579 --> 01:03:46,179
+align, then this cell, this neuron can
+choose to spike. It says an activation
+
+892
+01:03:46,179 --> 01:03:50,199
+potential down the axon and then this
+actually like diverges out to
+
+893
+01:03:50,199 --> 01:03:54,659
+connect to dendrites of other neurons that
+are downstream. So there are other
+
+894
+01:03:54,659 --> 01:03:57,639
+neurons here and their dendrites
+connect to the axons of these guys.
+
+895
+01:03:57,639 --> 01:04:02,299
+So basically, just neurons connected through
+these synapses in between and we had these
+
+896
+01:04:02,300 --> 01:04:05,840
+dendrites that are the input to a neuron and
+this axon that actually carries the
+
+897
+01:04:05,840 --> 01:04:10,410
+output of a neuron. And so basically, you
+can come up with a very crude model of a
+
+898
+01:04:10,410 --> 01:04:16,769
+neuron, and it will look something like this.
+We have an axon, so this is the cell body
+
+899
+01:04:16,769 --> 01:04:20,909
+here of a neuron. And just imagine an
+axon coming from a different neuron,
+
+900
+01:04:20,909 --> 01:04:24,730
+somewhere in the network, and this neuron is
+connected to that neuron through this
+
+901
+01:04:24,730 --> 01:04:29,840
+synapse. And every one of these synapses
+has a weight associated with it
+
+902
+01:04:29,840 --> 01:04:35,350
+of how much this neuron likes that
+neuron basically. And so axon carries
+
+903
+01:04:35,350 --> 01:04:39,769
+this x. It interacts in the synapse and
+they multiply in this crude model. So you
+
+904
+01:04:39,769 --> 01:04:44,989
+get w0x0 flowing to the soma.
+And then that happens for many neurons
+
+905
+01:04:44,989 --> 01:04:45,849
+so you have lots of
+
+906
+01:04:45,849 --> 01:04:51,500
+inputs of w times x flowing in. And the
+cell body here, it just performs a sum, offset by
+
+907
+01:04:51,500 --> 01:04:56,940
+a bias, and then if an activation function
+is met here, so it passes through an
+
+908
+01:04:56,940 --> 01:05:02,800
+activation function to actually compute
+the output of this axon. Now in
+
+909
+01:05:02,800 --> 01:05:06,570
+biological models, historically people
+liked to use the sigmoid nonlinearity to
+
+910
+01:05:06,570 --> 01:05:09,430
+actually use for the activation function.
+The reason for that is because
+
+911
+01:05:09,430 --> 01:05:11,730
+you get a number between 0 and 1, and
+
+912
+01:05:11,730 --> 01:05:15,420
+you can interpret that as the rate at
+which this neuron is firing for that
+
+913
+01:05:15,420 --> 01:05:19,809
+particular input. So it's a rate between
+0 and 1 that's going through the
+
+914
+01:05:19,809 --> 01:05:23,889
+activation function. So if this neuron has
+seen something it likes, in the neurons
+
+915
+01:05:23,889 --> 01:05:27,900
+that connected to it, it will start to
+spike a lot, and the rate is described by
+
+916
+01:05:27,900 --> 01:05:33,139
+f of the input. Okay, so that's the crude
+model of the neuron. If I wanted to implement it
+
+917
+01:05:33,139 --> 01:05:38,819
+it would look something like this. So a
+neuron_tick function forward pass, it receives
+
+918
+01:05:38,820 --> 01:05:44,500
+some inputs. This is a vector and we form
+a sum at the cell body, so just a linear sum.
+
+919
+01:05:44,500 --> 01:05:49,980
+And we put, we compute the firing rate as a sigmoid
+of the cell body sum and return the firing
+
+920
+01:05:49,980 --> 01:05:53,579
+rate. And then this can plug into
+different neurons, right? So you can
+
+921
+01:05:53,579 --> 01:05:56,710
+imagine, you can actually see that this
+looks very similar to a linear
+
+922
+01:05:56,710 --> 01:06:02,750
+classifier, right? We're forming a linear sum here,
+a weighted sum, and we're passing that through
+
+923
+01:06:02,750 --> 01:06:07,050
+nonlinearity. So every single neuron in
+this model is really like a small linear
+
+924
+01:06:07,050 --> 01:06:11,530
+classifier, but these linear classifiers plug into
+each other, and they can work together to
+
+925
+01:06:11,530 --> 01:06:16,650
+do interesting things. Now one note to make
+about neurons is that they're very, they're
+
+926
+01:06:16,650 --> 01:06:21,300
+not like biological neurons. Biological
+neurons are super complex, so if you go
+
+927
+01:06:21,300 --> 01:06:24,670
+around and you start saying that neural
+networks work like brain, people are
+
+928
+01:06:24,670 --> 01:06:28,849
+starting to frown. People will start to frown
+at you and that's because neurons are
+
+929
+01:06:28,849 --> 01:06:33,650
+complex, dynamical systems. There are many
+different types of neurons. They function
+
+930
+01:06:33,650 --> 01:06:38,550
+differently. These dendrites, they
+can perform lots of interesting
+
+931
+01:06:38,550 --> 01:06:42,140
+computation. A good review article is
+Dendritic Computation, which I really
+
+932
+01:06:42,140 --> 01:06:46,069
+enjoyed. These synapses are complex
+dynamical systems. They're not just a
+
+933
+01:06:46,070 --> 01:06:49,720
+single weight. And we're not really sure
+if the brain uses rate code to
+
+934
+01:06:49,720 --> 01:06:54,689
+communicate, so very crude mathematical
+model and don't push his analogy too much.
+
+935
+01:06:54,690 --> 01:06:57,960
+But it's good for, kind of like, media articles,
+
+936
+01:06:57,960 --> 01:07:01,990
+so I suppose that's why this keeps
+coming up again and again as we
+
+937
+01:07:01,990  --> 01:07:04,989
+explained that this works like your brain.
+But I'm not going to go too deep into
+
+938
+01:07:04,989 --> 01:07:09,829
+this. To go back to a question that was
+asked before, there's an entire set of
+
+939
+01:07:09,829 --> 01:07:11,859
+nonlinearities that we can choose from.
+
+940
+01:07:14,559 --> 01:07:17,559
+So historically, sigmoid has been used
+
+941
+01:07:17,559 --> 01:07:20,210
+quite a bit, and we're going to go into
+much more detail over what these
+
+942
+01:07:20,210 --> 01:07:23,690
+nonlinearities are, what are their
+tradeoffs, and why you might want to use
+
+943
+01:07:23,690 --> 01:07:27,838
+one or the other, but for now, I'd just like to
+flash them and mention that there are many things to
+
+944
+01:07:27,838 --> 01:07:28,579
+choose from.
+
+945
+01:07:28,579 --> 01:07:33,940
+Historically people use to signmoid and tanh.
+As of 2012, ReLU became quite popular.
+
+946
+01:07:33,940 --> 01:07:38,429
+It makes your networks converge quite a bit
+faster, so right now, if you wanted a
+
+947
+01:07:38,429 --> 01:07:41,429
+default choice for nonlinearity, use ReLU.
+
+948
+01:07:41,429 --> 01:07:45,679
+That's the current default recommendation.
+And then there's a few, kind of a hipster
+
+949
+01:07:45,679 --> 01:07:51,489
+activation functions here. And so Leaky ReLUs
+were proposed a few years ago. Maxout is
+
+950
+01:07:51,489 --> 01:07:54,989
+interesting. And very recently ELU.
+And so you can come up with different
+
+951
+01:07:54,989 --> 01:07:58,319
+activation functions and you can
+describe why these might work better or
+
+952
+01:07:58,320 --> 01:08:01,789
+not. And so this is an active area of
+research. It's trying to come up with these
+
+953
+01:08:01,789 --> 01:08:05,949
+activation functions that perform, that
+have better properties in one way or
+
+954
+01:08:05,949 --> 01:08:10,909
+another. So we're going to go into this with much
+more detail soon in the class. But for
+
+955
+01:08:10,909 --> 01:08:15,980
+now, we have these neurons, we have a
+choice of activation function, and then
+
+956
+01:08:15,980 --> 01:08:19,259
+we arrange these neurons into neural
+networks, right? So we just connect them
+
+957
+01:08:19,259 --> 01:08:23,140
+together so they can talk to each other.
+And so here is an example of a
+
+958
+01:08:23,140 --> 01:08:27,170
+2-layer neural net or 3-layer neural net. When
+you want to count the number of layers and the
+
+959
+01:08:27,170 --> 01:08:30,829
+neural net, you count the number of
+layers that have weights. So here, the
+
+960
+01:08:30,829 --> 01:08:35,449
+input layer does not count as a layer,
+because there's no... These neurons are just
+
+961
+01:08:35,449 --> 01:08:39,729
+single values. They don't actually do any
+computation. So we have two layers here
+
+962
+01:08:39,729 --> 01:08:45,068
+that have weights. So it's a 2-layer net. And
+we call these layers fully connected
+
+963
+01:08:45,069 --> 01:08:50,870
+layers, and so, remember that I shown you that a
+single neuron computes this little
+
+964
+01:08:50,870 --> 01:08:54,750
+weighted sum, and then passed that through
+nonlinearity. In a neural network, the
+
+965
+01:08:54,750 --> 01:08:58,829
+reason we arrange these into layers is
+because arranging them into layers allows
+
+966
+01:08:58,829 --> 01:09:01,759
+us to perform the computation much more
+efficiently. So instead of having an
+
+967
+01:09:01,759 --> 01:09:04,460
+amorphous blob of neurons and every one
+of them has to be computed independently,
+
+968
+01:09:04,460 --> 01:09:08,699
+having them in layers allows us to use
+vectorized operations. And so we can
+
+969
+01:09:08,699 --> 01:09:10,139
+compute an entire set of
+
+970
+01:09:10,140 --> 01:09:14,410
+neurons in a single hidden layer as just
+at a single times a matrix multiply. And
+
+971
+01:09:14,410 --> 01:09:17,619
+that's why we arrange them in these
+layers, where neurons inside a layer can be
+
+972
+01:09:17,619 --> 01:09:21,119
+evaluated completely in parallel, and they
+all see the same input. So it's a
+
+973
+01:09:21,119 --> 01:09:25,519
+computational trick to arrange them in
+layers. So this is a 3-layer neural net
+
+974
+01:09:25,520 --> 01:09:30,500
+and this is how you would compute it.
+Just a bunch of matrix multiplies
+
+975
+01:09:30,500 --> 01:09:35,550
+followed by activation function.
+So now I'd
+
+976
+01:09:35,550 --> 01:09:40,520
+like to show you a demo of how these
+neural networks work. So this is JavaScript demo
+
+977
+01:09:40,520 --> 01:09:44,770
+that I'll show you in a bit. But
+basically, this is an example of a
+
+978
+01:09:44,770 --> 01:09:50,080
+two-layer neural network classifying a,
+doing a binary classification task. So we have two
+
+979
+01:09:50,080 --> 01:09:54,119
+classes, red and green. And so we have these
+points in two dimensions, and I'm drawing
+
+980
+01:09:54,119 --> 01:09:58,109
+the decision boundaries by the neural
+network. And so what you can see is, when
+
+981
+01:09:58,109 --> 01:10:01,969
+I train a neural network on this data,
+the more hidden neurons I have in my
+
+982
+01:10:01,970 --> 01:10:05,770
+hidden layer, the more wiggle your neural
+network has, right? The more it can compute
+
+983
+01:10:05,770 --> 01:10:12,290
+crazy functions. And just to show you effect
+also of regularization strength. So this is the
+
+984
+01:10:12,290 --> 01:10:17,069
+regularization of how much you penalize
+large Ws. So you can see that when you insist
+
+985
+01:10:17,069 --> 01:10:22,340
+that your Ws are very small, you end up with
+a very smooth functions, so they don't
+
+986
+01:10:22,340 --> 01:10:27,050
+have as much variance. So these neural
+networks, there's not as much wiggle
+
+987
+01:10:27,050 --> 01:10:31,090
+that they can give you, and then as you
+decrease the regularization, these neural
+
+988
+01:10:31,090 --> 01:10:34,090
+networks can do more and more complex
+tasks, so they can kind of get in and get
+
+989
+01:10:34,090 --> 01:10:38,710
+these little squeezed out points to cover
+them in a training data. So let me show
+
+990
+01:10:38,710 --> 01:10:41,489
+you what this looks like
+
+991
+01:10:41,489 --> 01:10:47,079
+during training. Okay.
+
+992
+01:10:47,079 --> 01:10:53,010
+So there're some stuff to explain here.
+Let me first actually... So you can play with
+
+993
+01:10:53,010 --> 01:10:56,060
+this because it's all in JavaScript.
+
+994
+01:10:56,060 --> 01:11:04,060
+Okay. All right. So what we're doing here is we have
+six neurons, and this is a binary
+
+995
+01:11:04,060 --> 01:11:09,000
+classification dataset with circle
+data. And so we have a little cluster of
+
+996
+01:11:09,000 --> 01:11:13,520
+green dots separated by red dots. And we're
+training a neural network to classify
+
+997
+01:11:13,520 --> 01:11:18,080
+this dataset. So if I restart the neural
+network, it's just, starts off with a
+
+998
+01:11:18,080 --> 01:11:20,949
+random W, and then it converges the
+decision boundary to actually classify
+
+999
+01:11:20,949 --> 01:11:26,289
+the data. What I'm showing on the right, which is the
+cool part, this visualization, is one interpretation of
+
+1000
+01:11:26,289 --> 01:11:29,529
+the neural network here, is what I'm
+taking this grid here and I'm
+
+1001
+01:11:29,529 --> 01:11:33,909
+showing how this space gets warped by
+the neural network. So you can interpret
+
+1002
+01:11:33,909 --> 01:11:37,619
+what the neural network is doing is it's
+using its hidden layer to transform your
+
+1003
+01:11:37,619 --> 01:11:41,159
+input data in such a way that the second
+hidden layer can come in with a linear
+
+1004
+01:11:41,159 --> 01:11:47,059
+classifier and classify your data. So
+here, you see that the neural network
+
+1005
+01:11:47,060 --> 01:11:51,920
+arranges your space. It warps it such
+that the second layer, which is really a
+
+1006
+01:11:51,920 --> 01:11:56,779
+linear classifier on top of the first
+layer, can put a plane through it, okay?
+
+1007
+01:11:56,779 --> 01:11:59,939
+So it's warping the space so that you
+can put a plane through it and
+
+1008
+01:11:59,939 --> 01:12:06,259
+separate out the points. So let's look at
+this again. So you can roughly see what
+
+1009
+01:12:06,260 --> 01:12:10,940
+how this gets warped so that you can
+linearly classify the data. This is
+
+1010
+01:12:10,940 --> 01:12:13,569
+something that people sometimes also
+referred to as kernel trick. It's
+
+1011
+01:12:13,569 --> 01:12:19,149
+changing your data representation to a
+space where it's linearly separable. Okay.
+
+1012
+01:12:19,149 --> 01:12:23,079
+Now, here's a question. If we'd like to
+separate, so right now we have six
+
+1013
+01:12:23,079 --> 01:12:27,809
+neurons here in the intermediate layer,
+and it allows us to separate out these
+
+1014
+01:12:27,810 --> 01:12:33,580
+data points. So you can see actually those six
+neurons roughly. You can see these lines
+
+1015
+01:12:33,580 --> 01:12:36,869
+here, like they're kind of like these
+functions of one of these neurons. So
+
+1016
+01:12:36,869 --> 01:12:40,349
+here's a question for you, What is the
+minimum number of neurons for which this
+
+1017
+01:12:40,350 --> 01:12:45,570
+dataset is separable with a neural
+network? If I want the neural network
+
+1018
+01:12:45,570 --> 01:12:49,089
+to correctly classify this, how many neurons do
+I need in the hidden layer as a minimum?
+
+1019
+01:12:57,890 --> 01:13:04,270
+Four? I heard some threes, some fours.
+Binary search.
+
+1020
+01:13:04,270 --> 01:13:08,870
+So intuitively, the way this
+would work is, let's see four.
+
+1021
+01:13:12,270 --> 01:13:15,270
+So what happens with four is, there is one
+
+1022
+01:13:15,270 --> 01:13:18,910
+neuron here that went from this way to
+that way, this way to that way, this way
+
+1023
+01:13:18,910 --> 01:13:22,689
+to that way. There's four neurons that
+are cutting up this plane. And then
+
+1024
+01:13:22,689 --> 01:13:27,039
+there's an additional layer that's doing a
+weighted sum. So in fact, the lowest
+
+1025
+01:13:27,039 --> 01:13:34,739
+number here would be three, which
+would work. So with three neurons... So
+
+1026
+01:13:34,739 --> 01:13:39,189
+one plane, second plane, third plane. So
+three linear functions with a nonlinearity,
+
+1027
+01:13:39,189 --> 01:13:45,649
+and then you can basically with three
+lines, you can carve out the space so
+
+1028
+01:13:45,649 --> 01:13:50,329
+that the second layer can just combine
+them when their numbers are 1 and not 0.
+
+1029
+01:13:50,329 --> 01:13:52,429
+(Student is asking question)
+
+1030
+01:13:52,430 --> 01:13:57,850
+At two? Certainly. So at two, this will break
+because two lines are not enough. I
+
+1031
+01:13:57,850 --> 01:14:03,900
+suppose this works... Not going to look very
+good here. So with two, basically it will find
+
+1032
+01:14:03,900 --> 01:14:07,239
+the optimal way of just using these two
+lines. They're kind of creating this
+
+1033
+01:14:07,239 --> 01:14:11,239
+tunnel and that's the best you can do. Okay?
+
+1034
+01:14:11,239 --> 01:14:14,599
+(Student is asking question)
+
+1035
+01:14:18,600 --> 01:14:25,400
+The curve, I think... Which nonlinearity am I using?
+tanh? Yeah, I'm not sure exactly how that works out.
+
+1036
+01:14:25,400 --> 01:14:31,300
+If I was using ReLU, I think it would be much,
+so ReLU is the... Let me change to ReLU, and I
+
+1037
+01:14:31,300 --> 01:14:41,460
+think you'd see sharp boundaries. Yeah.
+Yes, this is three. You can do four. So let's do...
+
+1038
+01:14:41,460 --> 01:14:47,460
+(Student is asking question)
+
+1039
+01:14:47,460 --> 01:14:50,460
+Yeah, that's because, it's
+
+1040
+01:14:50,460 --> 01:14:52,130
+because in some of these parts
+
+1041
+01:14:52,130 --> 01:14:57,819
+there's more than one of those ReLUs
+are active, and so you end up with...
+
+1042
+01:14:57,819 --> 01:15:02,359
+There are really three lines. I think like one, two,
+three, but then in some of the corners two ReLU
+
+1043
+01:15:02,359 --> 01:15:05,689
+neurons are active and so these
+weights will add up. It's kind of funky. You
+
+1044
+01:15:05,689 --> 01:15:12,649
+have to think about a bit. But okay. So let's
+look at, say, twenty here. So I changed to twenty
+
+1045
+01:15:12,649 --> 01:15:16,670
+so we have lots of space there, and let's
+look at different datasets like say spiral.
+
+1046
+01:15:16,670 --> 01:15:22,390
+So you can see how this thing just, as I'm
+doing this update, it  will just go in there
+
+1047
+01:15:22,390 --> 01:15:32,800
+and figure that out. Very simple dataset
+is not... Spiral. Circle, and then random...
+
+1048
+01:15:33,200 --> 01:15:39,880
+so random data, and so you could, kind
+of goes in there, like covers up the green
+
+1049
+01:15:39,880 --> 01:15:48,039
+ones and the red ones. And yeah. And with
+fewer, say like five... I'm going to break this
+
+1050
+01:15:48,039 --> 01:15:54,890
+now. I'm not going to... Okay. So with five... Yes.
+ So this will start working worse and worse
+
+1051
+01:15:54,890 --> 01:15:58,770
+because you don't have enough capacity
+to separate out this data. So you can
+
+1052
+01:15:58,770 --> 01:16:05,270
+play with this in your free time.
+Okay. And so as a summary,
+
+1053
+01:16:05,270 --> 01:16:10,690
+we arrange these neurons in neural
+networks into fully connected layers.
+
+1054
+01:16:10,690 --> 01:16:14,579
+We've looked at backprop and how this gets
+chained in computational graphs. And they're
+
+1055
+01:16:14,579 --> 01:16:19,149
+not really neural. And as we'll see soon,
+the bigger the better, and we'll go into
+
+1056
+01:16:19,149 --> 01:16:23,510
+that a lot. I want to take questions before I end.
+Just sorry. Were there any questions? Go ahead.
+
+1057
+01:16:23,510 --> 01:16:27,710
+(Student is asking question)
+
+1058
+01:16:27,710 --> 01:16:29,359
+We have two more minutes. Sorry.
+
+1059
+01:16:29,359 --> 01:16:35,710
+(Student is asking question)
+
+1060
+01:16:35,710 --> 01:16:36,899
+Yes, thank you.
+
+1061
+01:16:36,899 --> 01:16:41,119
+So is it always better to have more neurons
+in your neural network? The answer to
+
+1062
+01:16:41,119 --> 01:16:48,809
+that is yes. More is always better. It's
+usually computational constraint, so more will
+
+1063
+01:16:48,810 --> 01:16:52,510
+always work better, but then you have to
+be careful to regularize it properly. So
+
+1064
+01:16:52,510 --> 01:16:55,810
+the correct way to constrain your neural
+network to not overfit your data is not by
+
+1065
+01:16:55,810 --> 01:16:58,940
+making the network smaller.
+The correct way to do it is to increase the
+
+1066
+01:16:58,940 --> 01:17:03,079
+regularization. So you always want to use
+as large a network as you want, but then
+
+1067
+01:17:03,079 --> 01:17:06,269
+you have to make sure to properly
+regularize it. But most of the time
+
+1068
+01:17:06,270 --> 01:17:09,320
+because of computational reasons, you have finite
+amount of time, you don't want to wait forever to
+
+1069
+01:17:09,320 --> 01:17:14,980
+train your networks. You'll use smaller
+ones for practical reasons. Question?
+
+1070
+01:17:14,980 --> 01:17:17,780
+(Student is asking question)
+
+1071
+01:17:17,780 --> 01:17:19,980
+Do you regularize each layer equally.
+
+1072
+01:17:19,980 --> 01:17:25,509
+Usually you do, as a simplification.
+Yeah. Most of the, often when you see
+
+1073
+01:17:25,510 --> 01:17:28,030
+networks get trained in practice, they will
+be regularized the same way throughout.
+
+1074
+01:17:28,030 --> 01:17:31,030
+But you don't have to necessarily. Go ahead.
+
+1075
+01:17:31,030 --> 01:17:35,710
+(Student is asking question)
+
+1076
+01:17:35,710 --> 01:17:40,500
+Is there any value to using second derivatives using
+hashing in optimizing neural networks? There is value
+
+1077
+01:17:40,500 --> 01:17:44,859
+sometimes when your data sets are small.
+You can use things like L-BFGS which I
+
+1078
+01:17:44,859 --> 01:17:47,729
+didn't go into too much, and that's a
+second order method, but usually the datasets
+
+1079
+01:17:47,729 --> 01:17:50,500
+are really large and that's when
+L-BFGS doesn't work very well.
+
+1080
+01:17:50,500 --> 01:17:57,039
+So when you millions of data points, you can't do
+L-BFGS for various reasons. Yeah. And L-BFGS is
+
+1081
+01:17:57,039 --> 01:18:01,970
+not very good with minibatch. You always
+have to do full batch by default. Question.
+
+1082
+01:18:01,970 --> 01:18:09,950
+(Student is asking question)
+
+1083
+01:18:09,950 --> 01:18:13,650
+So what is the tradeoff between depth and
+size roughly, like how do you allocate?
+
+1084
+01:18:13,650 --> 01:18:16,450
+Not a good answer for that unfortunately.
+
+1085
+01:18:16,450 --> 01:18:20,899
+So you want, depth is good, but maybe after
+like ten layers maybe, if you have simple dataet
+
+1086
+01:18:20,899 --> 01:18:25,219
+it's not really adding too much. We have
+one more minute so I can still take some
+
+1087
+01:18:25,220 --> 01:18:26,620
+questions. You had a question for a while.
+
+1088
+01:18:26,620 --> 01:18:31,520
+(Student is asking question)
+
+1089
+01:18:31,520 --> 01:18:35,990
+Yeah, so the tradeoff between
+where do I allocate my
+
+1090
+01:18:35,990 --> 01:18:40,019
+capacity, do I want us to be deeper or do
+I want it to be wider, not a very good
+
+1091
+01:18:40,020 --> 01:18:41,860
+answer to that.
+
+1092
+01:18:41,860 --> 01:18:44,560
+(Student is asking question)
+
+1093
+01:18:44,560 --> 01:18:47,860
+Yes, usually, especially with
+images, we find that more layers are
+
+1094
+01:18:47,860 --> 01:18:51,199
+critical. But sometimes when you have
+simple datasets like 2D or some
+
+1095
+01:18:51,199 --> 01:18:55,359
+other things like depth is not as
+critical, and so it's kind of slightly
+
+1096
+01:18:55,359 --> 01:19:59,670
+data dependent. We had a question over there.
+
+1097
+01:18:59,670 --> 01:19:05,670
+(Student is asking question)
+
+1098
+01:19:05,670 --> 01:19:10,050
+Different activation functions for different layers,
+does that help? Usually it's not done. Usually we
+
+1099
+01:19:10,050 --> 01:19:15,960
+just kind of pick one and go with it.
+So say, for ConvNets for example, we'll see that
+
+1100
+01:19:15,960 --> 01:19:19,279
+most of them are trained just with ReLUs.
+And so you just use that throughout and
+
+1101
+01:19:19,279 --> 01:19:22,389
+there's no real benefit to switch
+them around. People don't play with that
+
+1102
+01:19:22,390 --> 01:19:26,660
+too much, but in principle, there's
+nothing preventing you. So it is 4:20,
+
+1103
+01:19:26,660 --> 01:19:29,789
+so we're going to end here, but we'll see
+lots of more neural networks, so a lot of
+
+1104
+01:19:29,789 --> 01:19:31,738
+these questions, we'll go through them.

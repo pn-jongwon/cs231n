@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Python Numpy Tutorial</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="스탠포드 CS231n: Convolutional Neural Networks for Visual Recognition 수업자료 번역사이트">
+    <link rel="canonical" href="http://aikorea.org/cs231n/python-numpy-tutorial/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/cs231n/css/main.css">
+
+    <!-- Google fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+
+    <!-- Google tracking -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+</head>
+
+
+    <body>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="/cs231n/">CS231n Convolutional Neural Networks for Visual Recognition</a>
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+  <header class="post-header">
+    <h1>Python Numpy Tutorial</h1>
+  </header>
+
+  <article class="post-content">
+  <!--
+Python:
+  Simple data types
+    integer, float, string
+  Compound data types
+    tuple, list, dictionary, set
+  Flow control
+    if, while, for, try, with
+  Comprehensions, generators
+  Functions
+  Classes
+  Standard library
+    json, collections, itertools
+
+Numpy
+-->
+
+<p>이 튜토리얼은 <a href="http://cs.stanford.edu/people/jcjohns/">Justin Johnson</a> 에 의해 작성되었습니다.</p>
+
+<p>cs231n 수업의 모든 과제에서는 프로그래밍 언어로 파이썬을 사용할 것입니다.
+파이썬은 그 자체만으로도 훌륭한 범용 프로그래밍 언어이지만, 몇몇 라이브러리(numpy, scipy, matplotlib)의 도움으로
+계산과학 분야에서 강력한 개발 환경을 갖추게 됩니다.</p>
+
+<p>많은 분들이 파이썬과 numpy를 경험 해보셨을 거라고 생각합니다. 경험하지 못했을지라도 이 문서를 통해<br />
+‘프로그래밍 언어로서의 파이썬’과 ‘파이썬을 계산과학에 활용하는 법’을 빠르게 훑을 수 있습니다.</p>
+
+<p>만약 Matlab을 사용해보셨다면, <a href="http://wiki.scipy.org/NumPy_for_Matlab_Users">Matlab 사용자를 위한 numpy</a> 페이지를 추천해 드립니다.</p>
+
+<p>또한 <a href="http://cs.stanford.edu/~ermon/cs228/index.html">CS 228</a> 수업을 위해 <a href="http://web.stanford.edu/~kuleshov/">Volodymyr Kuleshov</a> 와 <a href="https://symsys.stanford.edu/viewing/symsysaffiliate/21335">Isaac Caswell</a> 가 만든 <a href="https://github.com/kuleshov/cs228-material/blob/master/tutorials/python/cs228-python-tutorial.ipynb">이 튜토리얼의 IPython notebook 버전</a> 도 참조할 수 있습니다.</p>
+
+<p>목차:</p>
+
+<ul>
+  <li><a href="#python">파이썬</a>
+    <ul>
+      <li><a href="#python-basic">기본 자료형</a></li>
+      <li><a href="#python-containers">컨테이너</a>
+        <ul>
+          <li><a href="#python-lists">리스트</a></li>
+          <li><a href="#python-dicts">딕셔너리</a></li>
+          <li><a href="#python-sets">집합</a></li>
+          <li><a href="#python-tuples">튜플</a></li>
+        </ul>
+      </li>
+      <li><a href="#python-functions">함수</a></li>
+      <li><a href="#python-classes">클래스</a></li>
+    </ul>
+  </li>
+  <li><a href="#numpy">Numpy</a>
+    <ul>
+      <li><a href="#numpy-arrays">배열</a></li>
+      <li><a href="#numpy-array-indexing">배열 인덱싱</a></li>
+      <li><a href="#numpy-datatypes">데이터 타입</a></li>
+      <li><a href="#numpy-math">배열 연산</a></li>
+      <li><a href="#numpy-broadcasting">브로드캐스팅</a></li>
+    </ul>
+  </li>
+  <li><a href="#scipy">SciPy</a>
+    <ul>
+      <li><a href="#scipy-image">이미지 작업</a></li>
+      <li><a href="#scipy-matlab">MATLAB 파일</a></li>
+      <li><a href="#scipy-dist">두 점 사이의 거리</a></li>
+    </ul>
+  </li>
+  <li><a href="#matplotlib">Matplotlib</a>
+    <ul>
+      <li><a href="#matplotlib-plotting">Plotting</a></li>
+      <li><a href="#matplotlib-subplots">Subplots</a></li>
+      <li><a href="#matplotlib-images">이미지</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p><a name="python"></a></p>
+
+<h2 id="section">파이썬</h2>
+<p>파이썬은 고급 프로그래밍 언어(사람이 이해하기 쉽게 작성된 언어)이며, 다중패러다임을 지원하는 동적 프로그래밍 언어입니다.
+짧지만 가독성 높은 코드 몇 줄로 수준 높은 아이디어들을 표현할 수 있기에 파이썬 코드는 거의 수도코드처럼 보인다고도 합니다.
+아래는 quicksort 알고리즘을 파이썬으로 구현한 예시입니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">quicksort</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">arr</span>
+    <span class="n">pivot</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">arr</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">pivot</span><span class="p">]</span>
+    <span class="n">middle</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">arr</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">pivot</span><span class="p">]</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">arr</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">pivot</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">quicksort</span><span class="p">(</span><span class="n">left</span><span class="p">)</span> <span class="o">+</span> <span class="n">middle</span> <span class="o">+</span> <span class="n">quicksort</span><span class="p">(</span><span class="n">right</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="n">quicksort</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="c"># 출력 "[1, 1, 2, 3, 6, 8, 10]"</span>
+</code></pre>
+</div>
+
+<h3 id="section-1">파이썬 버전</h3>
+<p>현재 파이썬에는 두 가지 버전이 있습니다. 파이썬 2.7 그리고 파이썬 3.4입니다.
+혼란스럽게도, 파이썬3은 기존 파이썬2와 호환되지 않게 변경된 부분이 있습니다.
+그러므로 파이썬 2.7로 쓰여진 코드는 3.4환경에서 동작하지 않고 그 반대도 마찬가지입니다.
+이 수업에선 파이썬 2.7을 사용합니다.</p>
+
+<p>커맨드라인에 아래의 명령어를 입력해서 현재 설치된 파이썬 버전을 확인할 수 있습니다.
+<code class="highlighter-rouge">python --version</code>.</p>
+
+<p><a name="python-basic"></a></p>
+
+<h3 id="section-2">기본 자료형</h3>
+
+<p>다른 프로그래밍 언어들처럼, 파이썬에는 정수, 실수, 불리언, 문자열 같은 기본 자료형이 있습니다.
+파이썬 기본 자료형 역시 다른 프로그래밍 언어와 유사합니다.</p>
+
+<p><strong>숫자:</strong> 다른 언어와 마찬가지로 파이썬의 정수형(Integers)과 실수형(floats) 데이터 타입 역시 동일한 역할을 합니다 :</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">x</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c"># 출력 "&lt;type 'int'&gt;"</span>
+<span class="k">print</span> <span class="n">x</span>       <span class="c"># 출력 "3"</span>
+<span class="k">print</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>   <span class="c"># 덧셈; 출력 "4"</span>
+<span class="k">print</span> <span class="n">x</span> <span class="o">-</span> <span class="mi">1</span>   <span class="c"># 뺄셈; 출력 "2"</span>
+<span class="k">print</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span>   <span class="c"># 곱셈; 출력 "6"</span>
+<span class="k">print</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span>  <span class="c"># 제곱; 출력 "9"</span>
+<span class="n">x</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="k">print</span> <span class="n">x</span>  <span class="c"># 출력 "4"</span>
+<span class="n">x</span> <span class="o">*=</span> <span class="mi">2</span>
+<span class="k">print</span> <span class="n">x</span>  <span class="c"># 출력 "8"</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mf">2.5</span>
+<span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="c"># 출력 "&lt;type 'float'&gt;"</span>
+<span class="k">print</span> <span class="n">y</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">y</span> <span class="o">**</span> <span class="mi">2</span> <span class="c"># 출력 "2.5 3.5 5.0 6.25"</span>
+</code></pre>
+</div>
+<p>다른 언어들과는 달리, 파이썬에는 증감 단항연산자(<code class="highlighter-rouge">x++</code>, <code class="highlighter-rouge">x--</code>)가 없습니다.</p>
+
+<p>파이썬 역시 long 정수형과 복소수 데이터 타입이 구현되어 있습니다.
+자세한 사항은 <a href="https://docs.python.org/2/library/stdtypes.html#numeric-types-int-float-long-complex">문서</a>에서 찾아볼 수 있습니다.</p>
+
+<p><strong>불리언(Booleans):</strong> 파이썬에는 논리 자료형의 모든 연산자가 구현되어 있습니다.
+그렇지만 기호(<code class="highlighter-rouge">&amp;&amp;</code>, <code class="highlighter-rouge">||</code>, 등.) 대신 영어 단어로 구현되어 있습니다 :</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">t</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">f</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="c"># 출력 "&lt;type 'bool'&gt;"</span>
+<span class="k">print</span> <span class="n">t</span> <span class="ow">and</span> <span class="n">f</span> <span class="c"># 논리 AND; 출력 "False"</span>
+<span class="k">print</span> <span class="n">t</span> <span class="ow">or</span> <span class="n">f</span>  <span class="c"># 논리 OR; 출력 "True"</span>
+<span class="k">print</span> <span class="ow">not</span> <span class="n">t</span>   <span class="c"># 논리 NOT; 출력 "False"</span>
+<span class="k">print</span> <span class="n">t</span> <span class="o">!=</span> <span class="n">f</span>  <span class="c"># 논리 XOR; 출력 "True"</span>
+</code></pre>
+</div>
+
+<p><strong>문자열:</strong> 파이썬은 문자열과 연관된 다양한 기능을 지원합니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">hello</span> <span class="o">=</span> <span class="s">'hello'</span>   <span class="c"># String 문자열을 표현할 땐 따옴표나</span>
+<span class="n">world</span> <span class="o">=</span> <span class="s">"world"</span>   <span class="c"># 쌍따옴표가 사용됩니다; 어떤 걸 써도 상관없습니다.</span>
+<span class="k">print</span> <span class="n">hello</span>       <span class="c"># 출력 "hello"</span>
+<span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">hello</span><span class="p">)</span>  <span class="c"># 문자열 길이; 출력 "5"</span>
+<span class="n">hw</span> <span class="o">=</span> <span class="n">hello</span> <span class="o">+</span> <span class="s">' '</span> <span class="o">+</span> <span class="n">world</span>  <span class="c"># 문자열 연결</span>
+<span class="k">print</span> <span class="n">hw</span>  <span class="c"># 출력 "hello world"</span>
+<span class="n">hw12</span> <span class="o">=</span> <span class="s">'</span><span class="si">%</span><span class="s">s </span><span class="si">%</span><span class="s">s </span><span class="si">%</span><span class="s">d'</span> <span class="o">%</span> <span class="p">(</span><span class="n">hello</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>  <span class="c"># sprintf 방식의 문자열 서식 지정</span>
+<span class="k">print</span> <span class="n">hw12</span>  <span class="c"># 출력 "hello world 12"</span>
+</code></pre>
+</div>
+
+<p>문자열 객체에는 유용한 메소드들이 많습니다; 예를 들어:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">s</span> <span class="o">=</span> <span class="s">"hello"</span>
+<span class="k">print</span> <span class="n">s</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>  <span class="c"># 문자열을 대문자로 시작하게 함; 출력 "Hello"</span>
+<span class="k">print</span> <span class="n">s</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>       <span class="c"># 모든 문자를 대문자로 바꿈; 출력 "HELLO"</span>
+<span class="k">print</span> <span class="n">s</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>      <span class="c"># 문자열 오른쪽 정렬, 빈공간은 여백으로 채움; 출력 "  hello"</span>
+<span class="k">print</span> <span class="n">s</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>     <span class="c"># 문자열 가운데 정렬, 빈공간은 여백으로 채움; 출력 " hello "</span>
+<span class="k">print</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">'l'</span><span class="p">,</span> <span class="s">'(ell)'</span><span class="p">)</span>  <span class="c"># 첫 번째 인자로 온 문자열을 두 번째 인자 문자열로 바꿈;</span>
+                               <span class="c"># 출력 "he(ell)(ell)o"</span>
+<span class="k">print</span> <span class="s">'  world '</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>  <span class="c"># 문자열 앞뒤 공백 제거; 출력 "world"</span>
+</code></pre>
+</div>
+<p>모든 문자열 메소드는 <a href="https://docs.python.org/2/library/stdtypes.html#string-methods">문서</a>에서 찾아볼 수 있습니다.</p>
+
+<p><a name="python-containers"></a></p>
+
+<h3 id="section-3">컨테이너</h3>
+<p>파이썬은 다음과 같은 컨테이너 타입이 구현되어 있습니다: 리스트, 딕셔너리, 집합, 튜플</p>
+
+<p><a name="python-lists"></a></p>
+
+<h4 id="section-4">리스트</h4>
+<p>리스트는 파이썬에서 배열 같은 존재입니다. 그렇지만 배열과 달리 크기 변경이 가능하고
+서로 다른 자료형일지라도 하나의 리스트에 저장될 수 있습니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>   <span class="c"># 리스트 생성</span>
+<span class="k">print</span> <span class="n">xs</span><span class="p">,</span> <span class="n">xs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>  <span class="c"># 출력 "[3, 1, 2] 2"</span>
+<span class="k">print</span> <span class="n">xs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>     <span class="c"># 인덱스가 음수일 경우 리스트의 끝에서부터 세어짐; 출력 "2"</span>
+<span class="n">xs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="s">'foo'</span>    <span class="c"># 리스트는 자료형이 다른 요소들을 저장할 수 있습니다</span>
+<span class="k">print</span> <span class="n">xs</span>         <span class="c"># 출력 "[3, 1, 'foo']"</span>
+<span class="n">xs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">'bar'</span><span class="p">)</span> <span class="c"># 리스트의 끝에 새 요소 추가</span>
+<span class="k">print</span> <span class="n">xs</span>         <span class="c"># 출력 "[3, 1, 'foo', 'bar']"</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">xs</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>     <span class="c"># 리스트의 마지막 요소 삭제하고 반환</span>
+<span class="k">print</span> <span class="n">x</span><span class="p">,</span> <span class="n">xs</span>      <span class="c"># 출력 "bar [3, 1, 'foo']"</span>
+</code></pre>
+</div>
+<p>마찬가지로, 리스트에 대해 자세한 사항은 <a href="https://docs.python.org/2/tutorial/datastructures.html#more-on-lists">문서</a>에서 찾아볼 수 있습니다.</p>
+
+<p><strong>슬라이싱:</strong>
+리스트의 요소로 한 번에 접근하는 것 이외에도, 파이썬은 리스트의 일부분에만 접근하는 간결한 문법을 제공합니다;
+이를 <em>슬라이싱</em>이라고 합니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">nums</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>    <span class="c"># range는 파이썬에 구현되어 있는 함수이며 정수들로 구성된 리스트를 만듭니다</span>
+<span class="k">print</span> <span class="n">nums</span>         <span class="c"># 출력 "[0, 1, 2, 3, 4]"</span>
+<span class="k">print</span> <span class="n">nums</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>    <span class="c"># 인덱스 2에서 4(제외)까지 슬라이싱; 출력 "[2, 3]"</span>
+<span class="k">print</span> <span class="n">nums</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>     <span class="c"># 인덱스 2에서 끝까지 슬라이싱; 출력 "[2, 3, 4]"</span>
+<span class="k">print</span> <span class="n">nums</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>     <span class="c"># 처음부터 인덱스 2(제외)까지 슬라이싱; 출력 "[0, 1]"</span>
+<span class="k">print</span> <span class="n">nums</span><span class="p">[:]</span>      <span class="c"># 전체 리스트 슬라이싱; 출력 ["0, 1, 2, 3, 4]"</span>
+<span class="k">print</span> <span class="n">nums</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>    <span class="c"># 슬라이싱 인덱스는 음수도 가능; 출력 ["0, 1, 2, 3]"</span>
+<span class="n">nums</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span> <span class="c"># 슬라이스된 리스트에 새로운 리스트 할당</span>
+<span class="k">print</span> <span class="n">nums</span>         <span class="c"># 출력 "[0, 1, 8, 9, 4]"</span>
+</code></pre>
+</div>
+<p>numpy 배열 부분에서 다시 슬라이싱을 보게 될 것입니다.</p>
+
+<p><strong>반복문:</strong> 아래와 같이 리스트의 요소들을 반복해서 조회할 수 있습니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">animals</span> <span class="o">=</span> <span class="p">[</span><span class="s">'cat'</span><span class="p">,</span> <span class="s">'dog'</span><span class="p">,</span> <span class="s">'monkey'</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">animal</span> <span class="ow">in</span> <span class="n">animals</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">animal</span>
+<span class="c"># 출력 "cat", "dog", "monkey", 한 줄에 하나씩 출력.</span>
+</code></pre>
+</div>
+
+<p>만약 반복문 내에서 리스트 각 요소의 인덱스에 접근하고 싶다면, ‘enumerate’ 함수를 사용하세요:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">animals</span> <span class="o">=</span> <span class="p">[</span><span class="s">'cat'</span><span class="p">,</span> <span class="s">'dog'</span><span class="p">,</span> <span class="s">'monkey'</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">animal</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">animals</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">'#</span><span class="si">%</span><span class="s">d: </span><span class="si">%</span><span class="s">s'</span> <span class="o">%</span> <span class="p">(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">animal</span><span class="p">)</span>
+<span class="c"># 출력 "#1: cat", "#2: dog", "#3: monkey", 한 줄에 하나씩 출력.</span>
+</code></pre>
+</div>
+
+<p><strong>리스트 comprehensions:</strong>
+프로그래밍을 하다 보면, 자료형을 변환해야 하는 경우가 자주 있습니다.
+간단한 예를 들자면, 숫자의 제곱을 계산하는 다음의 코드를 보세요:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">nums</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="n">squares</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">nums</span><span class="p">:</span>
+    <span class="n">squares</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">squares</span>   <span class="c"># 출력 [0, 1, 4, 9, 16]</span>
+</code></pre>
+</div>
+
+<p><strong>리스트 comprehension</strong>을 이용해 이 코드를 더 간단하게 만들 수 있습니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">nums</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="n">squares</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">nums</span><span class="p">]</span>
+<span class="k">print</span> <span class="n">squares</span>   <span class="c"># 출력 [0, 1, 4, 9, 16]</span>
+</code></pre>
+</div>
+
+<p>리스트 comprehensions에 조건을 추가할 수도 있습니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">nums</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="n">even_squares</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">nums</span> <span class="k">if</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+<span class="k">print</span> <span class="n">even_squares</span>  <span class="c"># 출력 "[0, 4, 16]"</span>
+</code></pre>
+</div>
+
+<p><a name="python-dicts"></a></p>
+
+<h4 id="section-5">딕셔너리</h4>
+<p>자바의 ‘맵’, 자바스크립트의 ‘오브젝트’와 유사하게, 파이썬의 ‘딕셔너리’는 (열쇠, 값) 쌍을 저장합니다.
+아래와 같은 방식으로 딕셔너리를 사용할 수 있습니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s">'cat'</span><span class="p">:</span> <span class="s">'cute'</span><span class="p">,</span> <span class="s">'dog'</span><span class="p">:</span> <span class="s">'furry'</span><span class="p">}</span>  <span class="c"># 새로운 딕셔너리를 만듭니다</span>
+<span class="k">print</span> <span class="n">d</span><span class="p">[</span><span class="s">'cat'</span><span class="p">]</span>       <span class="c"># 딕셔너리의 값을 받음; 출력 "cute"</span>
+<span class="k">print</span> <span class="s">'cat'</span> <span class="ow">in</span> <span class="n">d</span>     <span class="c"># 딕셔너리가 주어진 열쇠를 가졌는지 확인; 출력 "True"</span>
+<span class="n">d</span><span class="p">[</span><span class="s">'fish'</span><span class="p">]</span> <span class="o">=</span> <span class="s">'wet'</span>    <span class="c"># 딕셔너리의 값을 지정</span>
+<span class="k">print</span> <span class="n">d</span><span class="p">[</span><span class="s">'fish'</span><span class="p">]</span>      <span class="c"># 출력 "wet"</span>
+<span class="c"># print d['monkey']  # KeyError: 'monkey' not a key of d</span>
+<span class="k">print</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'monkey'</span><span class="p">,</span> <span class="s">'N/A'</span><span class="p">)</span>  <span class="c"># 딕셔너리의 값을 받음. 존재하지 않는 다면 'N/A'; 출력 "N/A"</span>
+<span class="k">print</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'fish'</span><span class="p">,</span> <span class="s">'N/A'</span><span class="p">)</span>    <span class="c"># 딕셔너리의 값을 받음. 존재하지 않는 다면 'N/A'; 출력 "wet"</span>
+<span class="k">del</span> <span class="n">d</span><span class="p">[</span><span class="s">'fish'</span><span class="p">]</span>        <span class="c"># 딕셔너리에 저장된 요소 삭제</span>
+<span class="k">print</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'fish'</span><span class="p">,</span> <span class="s">'N/A'</span><span class="p">)</span> <span class="c"># "fish"는 더 이상 열쇠가 아님; 출력 "N/A"</span>
+</code></pre>
+</div>
+<p>딕셔너리에 관해 더 알고 싶다면 <a href="https://docs.python.org/2/library/stdtypes.html#dict">문서</a>를 참조하세요.</p>
+
+<p><strong>반복문:</strong> 딕셔너리의 열쇠는 쉽게 반복될 수 있습니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s">'person'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'cat'</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s">'spider'</span><span class="p">:</span> <span class="mi">8</span><span class="p">}</span>
+<span class="k">for</span> <span class="n">animal</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+    <span class="n">legs</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">animal</span><span class="p">]</span>
+    <span class="k">print</span> <span class="s">'A </span><span class="si">%</span><span class="s">s has </span><span class="si">%</span><span class="s">d legs'</span> <span class="o">%</span> <span class="p">(</span><span class="n">animal</span><span class="p">,</span> <span class="n">legs</span><span class="p">)</span>
+<span class="c"># 출력 "A person has 2 legs", "A spider has 8 legs", "A cat has 4 legs", 한 줄에 하나씩 출력.</span>
+</code></pre>
+</div>
+
+<p>만약 열쇠와, 그에 상응하는 값에 접근하고 싶다면, ‘iteritems’ 메소드를 사용하세요:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s">'person'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'cat'</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s">'spider'</span><span class="p">:</span> <span class="mi">8</span><span class="p">}</span>
+<span class="k">for</span> <span class="n">animal</span><span class="p">,</span> <span class="n">legs</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+    <span class="k">print</span> <span class="s">'A </span><span class="si">%</span><span class="s">s has </span><span class="si">%</span><span class="s">d legs'</span> <span class="o">%</span> <span class="p">(</span><span class="n">animal</span><span class="p">,</span> <span class="n">legs</span><span class="p">)</span>
+<span class="c"># 출력 "A person has 2 legs", "A spider has 8 legs", "A cat has 4 legs", 한 줄에 하나씩 출력.</span>
+</code></pre>
+</div>
+
+<p><strong>딕셔너리 comprehensions:</strong>
+리스트 comprehensions과 유사한 딕셔너리 comprehensions을 통해 손쉽게 딕셔너리를 만들 수 있습니다.
+예시:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">nums</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="n">even_num_to_square</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">nums</span> <span class="k">if</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">}</span>
+<span class="k">print</span> <span class="n">even_num_to_square</span>  <span class="c"># 출력 "{0: 0, 2: 4, 4: 16}"</span>
+</code></pre>
+</div>
+
+<p><a name="python-sets"></a></p>
+
+<h4 id="section-6">집합</h4>
+<p>집합은 순서 구분이 없고 서로 다른 요소 간의 모임입니다. 예시:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">animals</span> <span class="o">=</span> <span class="p">{</span><span class="s">'cat'</span><span class="p">,</span> <span class="s">'dog'</span><span class="p">}</span>
+<span class="k">print</span> <span class="s">'cat'</span> <span class="ow">in</span> <span class="n">animals</span>   <span class="c"># 요소가 집합에 포함되어 있는지 확인; 출력 "True"</span>
+<span class="k">print</span> <span class="s">'fish'</span> <span class="ow">in</span> <span class="n">animals</span>  <span class="c"># 출력 "False"</span>
+<span class="n">animals</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">'fish'</span><span class="p">)</span>      <span class="c"># 요소를 집합에 추가</span>
+<span class="k">print</span> <span class="s">'fish'</span> <span class="ow">in</span> <span class="n">animals</span>  <span class="c"># 출력 "True"</span>
+<span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">animals</span><span class="p">)</span>       <span class="c"># 집합에 포함된 요소의 수; 출력 "3"</span>
+<span class="n">animals</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">'cat'</span><span class="p">)</span>       <span class="c"># 이미 포함되어있는 요소를 추가할 경우 아무 변화 없음</span>
+<span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">animals</span><span class="p">)</span>       <span class="c"># 출력 "3"</span>
+<span class="n">animals</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s">'cat'</span><span class="p">)</span>    <span class="c"># Remove an element from a set</span>
+<span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">animals</span><span class="p">)</span>       <span class="c"># 출력 "2"</span>
+</code></pre>
+</div>
+
+<p>마찬가지로, 집합에 관해 더 알고 싶다면 <a href="https://docs.python.org/2/library/sets.html#set-objects">문서</a>를 참조하세요.</p>
+
+<p><strong>반복문:</strong>
+집합을 반복하는 구문은 리스트 반복 구문과 동일합니다;
+그러나 집합은 순서가 없어서, 어떤 순서로 반복될지 추측할 순 없습니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">animals</span> <span class="o">=</span> <span class="p">{</span><span class="s">'cat'</span><span class="p">,</span> <span class="s">'dog'</span><span class="p">,</span> <span class="s">'fish'</span><span class="p">}</span>
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">animal</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">animals</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">'#</span><span class="si">%</span><span class="s">d: </span><span class="si">%</span><span class="s">s'</span> <span class="o">%</span> <span class="p">(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">animal</span><span class="p">)</span>
+<span class="c"># 출력 "#1: fish", "#2: dog", "#3: cat", 한 줄에 하나씩 출력.</span>
+</code></pre>
+</div>
+
+<p><strong>집합 comprehensions:</strong>
+리스트, 딕셔너리와 마찬가지로 집합 comprehensions을 통해 손쉽게 집합을 만들수 있습니다.</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
+<span class="n">nums</span> <span class="o">=</span> <span class="p">{</span><span class="nb">int</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">)}</span>
+<span class="k">print</span> <span class="n">nums</span>  <span class="c"># 출력 "set([0, 1, 2, 3, 4, 5])"</span>
+</code></pre>
+</div>
+
+<p><a name="python-tuples"></a></p>
+
+<h4 id="section-7">튜플</h4>
+<p>튜플은 요소 간 순서가 있으며 값이 변하지 않는 리스트입니다.
+튜플은 많은 면에서 리스트와 유사합니다; 가장 중요한 차이점은 튜플은 ‘딕셔너리의 열쇠’와 ‘집합의 요소’가 될 수 있지만, 리스트는 불가능하다는 점입니다.
+여기 간단한 예시가 있습니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">d</span> <span class="o">=</span> <span class="p">{(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)}</span>  <span class="c"># 튜플을 열쇠로 하는 딕셔너리 생성</span>
+<span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>       <span class="c"># 튜플 생성</span>
+<span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>    <span class="c"># 출력 "&lt;type 'tuple'&gt;"</span>
+<span class="k">print</span> <span class="n">d</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>       <span class="c"># 출력 "5"</span>
+<span class="k">print</span> <span class="n">d</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>  <span class="c"># 출력 "1"</span>
+</code></pre>
+</div>
+<p><a href="https://docs.python.org/2/tutorial/datastructures.html#tuples-and-sequences">문서</a>에 튜플에 관한 더 많은 정보가 있습니다.</p>
+
+<p><a name="python-functions"></a></p>
+
+<h3 id="section-8">함수</h3>
+<p>파이썬 함수는 ‘def’ 키워드를 통해 정의됩니다. 예시:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">sign</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">'positive'</span>
+    <span class="k">elif</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">'negative'</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">'zero'</span>
+
+<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
+    <span class="k">print</span> <span class="n">sign</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="c"># 출력 "negative", "zero", "positive", 한 줄에 하나씩 출력.</span>
+</code></pre>
+</div>
+
+<p>가끔은 아래처럼 선택적으로 인자를 받는 함수를 정의할 때도 있습니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">loud</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">loud</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">'HELLO, </span><span class="si">%</span><span class="s">s!'</span> <span class="o">%</span> <span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">'Hello, </span><span class="si">%</span><span class="s">s'</span> <span class="o">%</span> <span class="n">name</span>
+
+<span class="n">hello</span><span class="p">(</span><span class="s">'Bob'</span><span class="p">)</span> <span class="c"># 출력 "Hello, Bob"</span>
+<span class="n">hello</span><span class="p">(</span><span class="s">'Fred'</span><span class="p">,</span> <span class="n">loud</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>  <span class="c"># 출력 "HELLO, FRED!"</span>
+</code></pre>
+</div>
+<p>파이썬 함수에 관한 더 많은 정보는 <a href="https://docs.python.org/2/tutorial/controlflow.html#defining-functions">문서</a>를 참조하세요.</p>
+
+<p><a name="python-classes"></a></p>
+
+<h3 id="section-9">클래스</h3>
+
+<p>파이썬에서 클래스를 정의하는 구문은 복잡하지 않습니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Greeter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="c"># 생성자</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>  <span class="c"># 인스턴스 변수 선언</span>
+
+    <span class="c"># 인스턴스 메소드</span>
+    <span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loud</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">loud</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">'HELLO, </span><span class="si">%</span><span class="s">s!'</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">'Hello, </span><span class="si">%</span><span class="s">s'</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">Greeter</span><span class="p">(</span><span class="s">'Fred'</span><span class="p">)</span>  <span class="c"># Greeter 클래스의 인스턴스 생성</span>
+<span class="n">g</span><span class="o">.</span><span class="n">greet</span><span class="p">()</span>            <span class="c"># 인스턴스 메소드 호출; 출력 "Hello, Fred"</span>
+<span class="n">g</span><span class="o">.</span><span class="n">greet</span><span class="p">(</span><span class="n">loud</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>   <span class="c"># 인스턴스 메소드 호출; 출력 "HELLO, FRED!"</span>
+</code></pre>
+</div>
+<p>파이썬 클래스에 관한 더 많은 정보는 <a href="https://docs.python.org/2/tutorial/classes.html">문서</a>를 참조하세요.</p>
+
+<p><a name="numpy"></a></p>
+
+<h2 id="numpy">Numpy</h2>
+
+<p><a href="http://www.numpy.org/">Numpy</a>는 파이썬이 계산과학분야에 이용될때 핵심 역할을 하는 라이브러리입니다.
+Numpy는 고성능의 다차원 배열 객체와 이를 다룰 도구를 제공합니다. 만약 MATLAB에 익숙한 분이라면 Numpy 학습을 시작하는데 있어
+<a href="http://wiki.scipy.org/NumPy_for_Matlab_Users">이 튜토리얼</a>이 유용할 것입니다.</p>
+
+<p><a name="numpy-arrays"></a></p>
+
+<h3 id="section-10">배열</h3>
+<p>Numpy 배열은 동일한 자료형을 가지는 값들이 격자판 형태로 있는 것입니다. 각각의 값들은 튜플(이때 튜플은 양의 정수만을 요소값으로 갖습니다.) 형태로 색인 됩니다.
+<em>rank</em>는 배열이 몇 차원인지를 의미합니다; <em>shape</em>는 는 각 차원의 크기를 알려주는 정수들이 모인 튜플입니다.</p>
+
+<p>파이썬의 리스트를 중첩해 Numpy 배열을 초기화 할 수 있고, 대괄호를 통해 각 요소에 접근할 수 있습니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>  <span class="c"># rank가 1인 배열 생성</span>
+<span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>            <span class="c"># 출력 "&lt;type 'numpy.ndarray'&gt;"</span>
+<span class="k">print</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span>            <span class="c"># 출력 "(3,)"</span>
+<span class="k">print</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>   <span class="c"># 출력 "1 2 3"</span>
+<span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>                 <span class="c"># 요소를 변경</span>
+<span class="k">print</span> <span class="n">a</span>                  <span class="c"># 출력 "[5, 2, 3]"</span>
+
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]])</span>   <span class="c"># rank가 2인 배열 생성</span>
+<span class="k">print</span> <span class="n">b</span><span class="o">.</span><span class="n">shape</span>                     <span class="c"># 출력 "(2, 3)"</span>
+<span class="k">print</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>   <span class="c"># 출력 "1 2 4"</span>
+</code></pre>
+</div>
+
+<p>리스트의 중첩이 아니더라도 Numpy는 배열을 만들기 위한 다양한 함수를 제공합니다.</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>  <span class="c"># 모든 값이 0인 배열 생성</span>
+<span class="k">print</span> <span class="n">a</span>              <span class="c"># 출력 "[[ 0.  0.]</span>
+                     <span class="c">#       [ 0.  0.]]"</span>
+
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>   <span class="c"># 모든 값이 1인 배열 생성</span>
+<span class="k">print</span> <span class="n">b</span>              <span class="c"># 출력 "[[ 1.  1.]]"</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="mi">7</span><span class="p">)</span> <span class="c"># 모든 값이 특정 상수인 배열 생성</span>
+<span class="k">print</span> <span class="n">c</span>               <span class="c"># 출력 "[[ 7.  7.]</span>
+                      <span class="c">#       [ 7.  7.]]"</span>
+
+<span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>        <span class="c"># 2x2 단위행렬 생성</span>
+<span class="k">print</span> <span class="n">d</span>              <span class="c"># 출력 "[[ 1.  0.]</span>
+                     <span class="c">#       [ 0.  1.]]"</span>
+
+<span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="c"># 임의의 값으로 채워진 배열 생성</span>
+<span class="k">print</span> <span class="n">e</span>                     <span class="c"># 임의의 값 출력 "[[ 0.91940167  0.08143941]</span>
+                            <span class="c">#                  [ 0.68744134  0.87236687]]"</span>
+</code></pre>
+</div>
+<p>배열 생성에 관한 다른 방법들은 <a href="http://docs.scipy.org/doc/numpy/user/basics.creation.html#arrays-creation">문서</a>를 참조하세요.</p>
+
+<p><a name="numpy-array-indexing"></a></p>
+
+<h3 id="section-11">배열 인덱싱</h3>
+<p>Numpy는 배열을 인덱싱하는 몇 가지 방법을 제공합니다.</p>
+
+<p><strong>슬라이싱:</strong>
+파이썬 리스트와 유사하게, Numpy 배열도 슬라이싱이 가능합니다. Numpy 배열은 다차원인 경우가 많기에, 각 차원별로 어떻게 슬라이스할건지 명확히 해야 합니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="c"># Create the following rank 2 array with shape (3, 4)</span>
+<span class="c"># [[ 1  2  3  4]</span>
+<span class="c">#  [ 5  6  7  8]</span>
+<span class="c">#  [ 9 10 11 12]]</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">],</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">]])</span>
+
+<span class="c"># 슬라이싱을 이용하여 첫 두 행과 1열, 2열로 이루어진 부분배열을 만들어 봅시다;</span>
+<span class="c"># b는 shape가 (2,2)인 배열이 됩니다:</span>
+<span class="c"># [[2 3]</span>
+<span class="c">#  [6 7]]</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="p">[:</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+
+<span class="c"># 슬라이싱된 배열은 원본 배열과 같은 데이터를 참조합니다, 즉 슬라이싱된 배열을 수정하면</span>
+<span class="c"># 원본 배열 역시 수정됩니다.</span>
+<span class="k">print</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>   <span class="c"># 출력 "2"</span>
+<span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">77</span>    <span class="c"># b[0, 0]은 a[0, 1]과 같은 데이터입니다</span>
+<span class="k">print</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>   <span class="c"># 출력 "77"</span>
+</code></pre>
+</div>
+
+<p>정수를 이용한 인덱싱과 슬라이싱을 혼합하여 사용할 수 있습니다.
+하지만 이렇게 할 경우, 기존의 배열보다 낮은 rank의 배열이 얻어집니다.
+이는 MATLAB이 배열을 다루는 방식과 차이가 있습니다.</p>
+
+<p>슬라이싱:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="c"># 아래와 같은 요소를 가지는 rank가 2이고 shape가 (3, 4)인 배열 생성</span>
+<span class="c"># [[ 1  2  3  4]</span>
+<span class="c">#  [ 5  6  7  8]</span>
+<span class="c">#  [ 9 10 11 12]]</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">],</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">]])</span>
+
+<span class="c"># 배열의 중간 행에 접근하는 두 가지 방법이 있습니다.</span>
+<span class="c"># 정수 인덱싱과 슬라이싱을 혼합해서 사용하면 낮은 rank의 배열이 생성되지만,</span>
+<span class="c"># 슬라이싱만 사용하면 원본 배열과 동일한 rank의 배열이 생성됩니다.</span>
+<span class="n">row_r1</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>    <span class="c"># 배열a의 두 번째 행을 rank가 1인 배열로</span>
+<span class="n">row_r2</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span>  <span class="c"># 배열a의 두 번째 행을 rank가 2인 배열로</span>
+<span class="k">print</span> <span class="n">row_r1</span><span class="p">,</span> <span class="n">row_r1</span><span class="o">.</span><span class="n">shape</span>  <span class="c"># 출력 "[5 6 7 8] (4,)"</span>
+<span class="k">print</span> <span class="n">row_r2</span><span class="p">,</span> <span class="n">row_r2</span><span class="o">.</span><span class="n">shape</span>  <span class="c"># 출력 "[[5 6 7 8]] (1, 4)"</span>
+
+<span class="c"># 행이 아닌 열의 경우에도 마찬가지입니다:</span>
+<span class="n">col_r1</span> <span class="o">=</span> <span class="n">a</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">col_r2</span> <span class="o">=</span> <span class="n">a</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+<span class="k">print</span> <span class="n">col_r1</span><span class="p">,</span> <span class="n">col_r1</span><span class="o">.</span><span class="n">shape</span>  <span class="c"># 출력 "[ 2  6 10] (3,)"</span>
+<span class="k">print</span> <span class="n">col_r2</span><span class="p">,</span> <span class="n">col_r2</span><span class="o">.</span><span class="n">shape</span>  <span class="c"># 출력 "[[ 2]</span>
+                            <span class="c">#       [ 6]</span>
+                            <span class="c">#       [10]] (3, 1)"</span>
+</code></pre>
+</div>
+
+<p><strong>정수 배열 인덱싱:</strong>
+Numpy 배열을 슬라이싱하면, 결과로 얻어지는 배열은 언제나 원본 배열의 부분 배열입니다.
+그러나 정수 배열 인덱싱을 한다면, 원본과 다른 배열을 만들 수 있습니다.
+여기에 예시가 있습니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]])</span>
+
+<span class="c"># 정수 배열 인덱싱의 예.</span>
+<span class="c"># 반환되는 배열의 shape는 (3,)</span>
+<span class="k">print</span> <span class="n">a</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>  <span class="c"># 출력 "[1 4 5]"</span>
+
+<span class="c"># 위에서 본 정수 배열 인덱싱 예제는 다음과 동일합니다:</span>
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>  <span class="c"># 출력 "[1 4 5]"</span>
+
+<span class="c"># 정수 배열 인덱싱을 사용할 때,</span>
+<span class="c"># 원본 배열의 같은 요소를 재사용할 수 있습니다:</span>
+<span class="k">print</span> <span class="n">a</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>  <span class="c"># 출력 "[2 2]"</span>
+
+<span class="c"># 위 예제는 다음과 동일합니다</span>
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>  <span class="c"># 출력 "[2 2]"</span>
+</code></pre>
+</div>
+
+<p>정수 배열 인덱싱을 유용하게 사용하는 방법 중 하나는 행렬의 각 행에서 하나의 요소를 선택하거나 바꾸는 것입니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="c"># 요소를 선택할 새로운 배열 생성</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]])</span>
+
+<span class="k">print</span> <span class="n">a</span>  <span class="c"># 출력 "array([[ 1,  2,  3],</span>
+         <span class="c">#             [ 4,  5,  6],</span>
+         <span class="c">#             [ 7,  8,  9],</span>
+         <span class="c">#             [10, 11, 12]])"</span>
+
+<span class="c"># 인덱스를 저장할 배열 생성</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+
+<span class="c"># b에 저장된 인덱스를 이용해 각 행에서 하나의 요소를 선택합니다</span>
+<span class="k">print</span> <span class="n">a</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">b</span><span class="p">]</span>  <span class="c"># 출력 "[ 1  6  7 11]"</span>
+
+<span class="c"># b에 저장된 인덱스를 이용해 각 행에서 하나의 요소를 변경합니다</span>
+<span class="n">a</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">b</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">10</span>
+
+<span class="k">print</span> <span class="n">a</span>  <span class="c"># 출력 "array([[11,  2,  3],</span>
+         <span class="c">#             [ 4,  5, 16],</span>
+         <span class="c">#             [17,  8,  9],</span>
+         <span class="c">#             [10, 21, 12]])</span>
+</code></pre>
+</div>
+
+<p><strong>불리언 배열 인덱싱:</strong>
+불리언 배열 인덱싱을 통해 배열 속 요소를 취사선택할 수 있습니다.
+불리언 배열 인덱싱은 특정 조건을 만족하게 하는 요소만 선택하고자 할 때 자주 사용됩니다.
+다음은 그 예시입니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]])</span>
+
+<span class="n">bool_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span>  <span class="c"># 2보다 큰 a의 요소를 찾습니다;</span>
+                    <span class="c"># 이 코드는 a와 shape가 같고 불리언 자료형을 요소로 하는 numpy 배열을 반환합니다,</span>
+                    <span class="c"># bool_idx의 각 요소는 동일한 위치에 있는 a의</span>
+                    <span class="c"># 요소가 2보다 큰지를 말해줍니다.</span>
+
+<span class="k">print</span> <span class="n">bool_idx</span>      <span class="c"># 출력 "[[False False]</span>
+                    <span class="c">#       [ True  True]</span>
+                    <span class="c">#       [ True  True]]"</span>
+
+<span class="c"># 불리언 배열 인덱싱을 통해 bool_idx에서</span>
+<span class="c"># 참 값을 가지는 요소로 구성되는</span>
+<span class="c"># rank 1인 배열을 구성할 수 있습니다.</span>
+<span class="k">print</span> <span class="n">a</span><span class="p">[</span><span class="n">bool_idx</span><span class="p">]</span>  <span class="c"># 출력 "[3 4 5 6]"</span>
+
+<span class="c"># 위에서 한 모든것을 한 문장으로 할 수 있습니다:</span>
+<span class="k">print</span> <span class="n">a</span><span class="p">[</span><span class="n">a</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">]</span>     <span class="c"># 출력 "[3 4 5 6]"</span>
+</code></pre>
+</div>
+
+<p>튜토리얼을 간결히 하고자 numpy 배열 인덱싱에 관한 많은 내용을 생략했습니다.
+조금 더 알고싶다면 <a href="http://docs.scipy.org/doc/numpy/reference/arrays.indexing.html">문서</a>를 참조하세요.</p>
+
+<p><a name="numpy-datatypes"></a></p>
+
+<h3 id="section-12">자료형</h3>
+<p>Numpy 배열은 동일한 자료형을 가지는 값들이 격자판 형태로 있는 것입니다.
+Numpy에선 배열을 구성하는 데 사용할 수 있는 다양한 숫자 자료형을 제공합니다.
+Numpy는 배열이 생성될 때 자료형을 스스로 추측합니다, 그러나 배열을 생성할 때 명시적으로 특정 자료형을 지정할 수도 있습니다. 예시:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>  <span class="c"># Numpy가 자료형을 추측해서 선택</span>
+<span class="k">print</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span>         <span class="c"># 출력 "int64"</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>  <span class="c"># Numpy가 자료형을 추측해서 선택</span>
+<span class="k">print</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span>             <span class="c"># 출력 "float64"</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>  <span class="c"># 특정 자료형을 명시적으로 지정</span>
+<span class="k">print</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span>                         <span class="c"># 출력 "int64"</span>
+</code></pre>
+</div>
+<p>Numpy 자료형에 관한 자세한 사항은 <a href="http://docs.scipy.org/doc/numpy/reference/arrays.dtypes.html">문서</a>를 참조하세요.</p>
+
+<p><a name="numpy-math"></a></p>
+
+<h3 id="section-13">배열 연산</h3>
+<p>기본적인 수학함수는 배열의 각 요소별로 동작하며 연산자를 통해 동작하거나 numpy 함수모듈을 통해 동작합니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+<span class="c"># 요소별 합; 둘 다 다음의 배열을 만듭니다</span>
+<span class="c"># [[ 6.0  8.0]</span>
+<span class="c">#  [10.0 12.0]]</span>
+<span class="k">print</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c"># 요소별 차; 둘 다 다음의 배열을 만듭니다</span>
+<span class="c"># [[-4.0 -4.0]</span>
+<span class="c">#  [-4.0 -4.0]]</span>
+<span class="k">print</span> <span class="n">x</span> <span class="o">-</span> <span class="n">y</span>
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c"># 요소별 곱; 둘 다 다음의 배열을 만듭니다</span>
+<span class="c"># [[ 5.0 12.0]</span>
+<span class="c">#  [21.0 32.0]]</span>
+<span class="k">print</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c"># 요소별 나눗셈; 둘 다 다음의 배열을 만듭니다</span>
+<span class="c"># [[ 0.2         0.33333333]</span>
+<span class="c">#  [ 0.42857143  0.5       ]]</span>
+<span class="k">print</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span>
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c"># 요소별 제곱근; 다음의 배열을 만듭니다</span>
+<span class="c"># [[ 1.          1.41421356]</span>
+<span class="c">#  [ 1.73205081  2.        ]]</span>
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>MATLAB과 달리, ‘<em>‘은 행렬 곱이 아니라 요소별 곱입니다. Numpy에선 벡터의 내적, 벡터와 행렬의 곱, 행렬곱을 위해 ‘</em>‘대신 ‘dot’함수를 사용합니다. ‘dot’은 Numpy 모듈 함수로서도 배열 객체의 인스턴스 메소드로서도 이용 가능한 합수입니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]])</span>
+
+<span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">])</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">])</span>
+
+<span class="c"># 벡터의 내적; 둘 다 결과는 219</span>
+<span class="k">print</span> <span class="n">v</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+
+<span class="c"># 행렬과 벡터의 곱; 둘 다 결과는 rank 1인 배열 [29 67]</span>
+<span class="k">print</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+<span class="c"># 행렬곱; 둘 다 결과는 rank 2인 배열</span>
+<span class="c"># [[19 22]</span>
+<span class="c">#  [43 50]]</span>
+<span class="k">print</span> <span class="n">x</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>Numpy는 배열 연산에 유용하게 쓰이는 많은 함수를 제공합니다. 가장 유용한 건 ‘sum’입니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c"># 모든 요소를 합한 값을 연산; 출력 "10"</span>
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c"># 각 열에 대한 합을 연산; 출력 "[4 6]"</span>
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c"># 각 행에 대한 합을 연산; 출력 "[3 7]"</span>
+</code></pre>
+</div>
+<p>Numpy가 제공하는 모든 수학함수의 목록은 <a href="http://docs.scipy.org/doc/numpy/reference/routines.math.html">문서</a>를 참조하세요.</p>
+
+<p>배열연산을 하지 않더라도, 종종 배열의 모양을 바꾸거나 데이터를 처리해야 할 때가 있습니다.
+가장 간단한 예는 행렬의 주 대각선을 기준으로 대칭되는 요소끼리 뒤바꾸는 것입니다; 이를 전치라고 하며 행렬을 전치하기 위해선, 간단하게 배열 객체의 ‘T’ 속성을 사용하면 됩니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]])</span>
+<span class="k">print</span> <span class="n">x</span>    <span class="c"># 출력 "[[1 2]</span>
+           <span class="c">#          [3 4]]"</span>
+<span class="k">print</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span>  <span class="c"># 출력 "[[1 3]</span>
+           <span class="c">#          [2 4]]"</span>
+
+<span class="c"># rank 1인 배열을 전치할 경우 아무 일도 일어나지 않습니다:</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="k">print</span> <span class="n">v</span>    <span class="c"># 출력 "[1 2 3]"</span>
+<span class="k">print</span> <span class="n">v</span><span class="o">.</span><span class="n">T</span>  <span class="c"># 출력 "[1 2 3]"</span>
+</code></pre>
+</div>
+<p>Numpy는 배열을 다루는 다양한 함수들을 제공합니다; 이러한 함수의 전체 목록은 <a href="http://docs.scipy.org/doc/numpy/reference/routines.array-manipulation.html">문서</a>를 참조하세요.</p>
+
+<p><a name="numpy-broadcasting"></a></p>
+
+<h3 id="section-14">브로드캐스팅</h3>
+<p>브로트캐스팅은 Numpy에서 shape가 다른 배열 간에도 산술 연산이 가능하게 하는 메커니즘입니다. 종종 작은 배열과 큰 배열이 있을 때, 큰 배열을 대상으로 작은 배열을 여러 번 연산하고자 할 때가 있습니다. 예를 들어, 행렬의 각 행에 상수 벡터를 더하는 걸 생각해보세요. 이는 다음과 같은 방식으로 처리될 수 있습니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="c"># 행렬 x의 각 행에 벡터 v를 더한 뒤,</span>
+<span class="c"># 그 결과를 행렬 y에 저장하고자 합니다</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]])</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>   <span class="c"># x와 동일한 shape를 가지며 비어있는 행렬 생성</span>
+
+<span class="c"># 명시적 반복문을 통해 행렬 x의 각 행에 벡터 v를 더하는 방법</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+    <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">v</span>
+
+<span class="c"># 이제 y는 다음과 같습니다</span>
+<span class="c"># [[ 2  2  4]</span>
+<span class="c">#  [ 5  5  7]</span>
+<span class="c">#  [ 8  8 10]</span>
+<span class="c">#  [11 11 13]]</span>
+<span class="k">print</span> <span class="n">y</span>
+</code></pre>
+</div>
+
+<p>위의 방식대로 하면 됩니다; 그러나 ‘x’가 매우 큰 행렬이라면, 파이썬의 명시적 반복문을 이용한 위 코드는 매우 느려질 수 있습니다. 벡터 ‘v’를 행렬 ‘x’의 각 행에 더하는 것은 ‘v’를 여러 개 복사해 수직으로 쌓은 행렬 ‘vv’를 만들고 이 ‘vv’를 ‘x’에 더하는것과 동일합니다. 이 과정을 아래의 코드로 구현할 수 있습니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="c"># 벡터 v를 행렬 x의 각 행에 더한 뒤,</span>
+<span class="c"># 그 결과를 행렬 y에 저장하고자 합니다</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]])</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">vv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c"># v의 복사본 4개를 위로 차곡차곡 쌓은 것이 vv</span>
+<span class="k">print</span> <span class="n">vv</span>                 <span class="c"># 출력 "[[1 0 1]</span>
+                         <span class="c">#       [1 0 1]</span>
+                         <span class="c">#       [1 0 1]</span>
+                         <span class="c">#       [1 0 1]]"</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">vv</span>  <span class="c"># x와 vv의 요소별 합</span>
+<span class="k">print</span> <span class="n">y</span>  <span class="c"># 출력 "[[ 2  2  4</span>
+         <span class="c">#       [ 5  5  7]</span>
+         <span class="c">#       [ 8  8 10]</span>
+         <span class="c">#       [11 11 13]]"</span>
+</code></pre>
+</div>
+
+<p>Numpy 브로드캐스팅을 이용한다면 이렇게 v의 복사본을 여러 개 만들지 않아도 동일한 연산을 할 수 있습니다.
+아래는 브로드캐스팅을 이용한 예시 코드입니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="c"># 벡터 v를 행렬 x의 각 행에 더한 뒤,</span>
+<span class="c"># 그 결과를 행렬 y에 저장하고자 합니다</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]])</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">v</span>  <span class="c"># 브로드캐스팅을 이용하여 v를 x의 각 행에 더하기</span>
+<span class="k">print</span> <span class="n">y</span>  <span class="c"># 출력 "[[ 2  2  4]</span>
+         <span class="c">#       [ 5  5  7]</span>
+         <span class="c">#       [ 8  8 10]</span>
+         <span class="c">#       [11 11 13]]"</span>
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">x</code>의 shape가 <code class="highlighter-rouge">(4, 3)</code>이고 <code class="highlighter-rouge">v</code>의 shape가 <code class="highlighter-rouge">(3,)</code>라도 브로드캐스팅으로 인해 <code class="highlighter-rouge">y = x + v</code>는 문제없이 수행됩니다;
+이때 ‘v’는 ‘v’의 복사본이 차곡차곡 쌓인 shape <code class="highlighter-rouge">(4, 3)</code>처럼 간주되어 ‘x’와 동일한 shape가 되며 이들 간의 요소별 덧셈연산이 y에 저장됩니다.</p>
+
+<p>두 배열의 브로드캐스팅은 아래의 규칙을 따릅니다:</p>
+
+<ol>
+  <li>두 배열이 동일한 rank를 가지고 있지 않다면, 낮은 rank의 1차원 배열이 높은 rank 배열의 shape로 간주합니다.</li>
+  <li>특정 차원에서 두 배열이 동일한 크기를 갖거나, 두 배열 중 하나의 크기가 1이라면 그 두 배열은 특정 차원에서 <em>compatible</em>하다고 여겨집니다.</li>
+  <li>두 행렬이 모든 차원에서 compatible하다면, 브로드캐스팅이 가능합니다.</li>
+  <li>브로드캐스팅이 이뤄지면, 각 배열 shape의 요소별 최소공배수로 이루어진 shape가 두 배열의 shape로 간주합니다.</li>
+  <li>차원에 상관없이 크기가 1인 배열과 1보다 큰 배열이 있을 때, 크기가 1인 배열은 자신의 차원 수만큼 복사되어 쌓인 것처럼 간주합니다.</li>
+</ol>
+
+<p>설명이 이해하기 부족하다면 <a href="http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html">scipy문서</a>나 <a href="http://wiki.scipy.org/EricsBroadcastingDoc">scipy위키</a>를 참조하세요.</p>
+
+<p>브로드캐스팅을 지원하는 함수를 <em>universal functions</em>라고 합니다.
+<em>universal functions</em> 목록은 <a href="http://docs.scipy.org/doc/numpy/reference/ufuncs.html#available-ufuncs">문서</a>를 참조하세요.</p>
+
+<p>브로드캐스팅을 응용한 예시들입니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="c"># 벡터의 외적을 계산</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>  <span class="c"># v의 shape는 (3,)</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>    <span class="c"># w의 shape는 (2,)</span>
+<span class="c"># 외적을 계산하기 위해, 먼저 v를 shape가 (3,1)인 행벡터로 바꿔야 합니다;</span>
+<span class="c"># 그다음 이것을 w에 맞춰 브로드캐스팅한뒤 결과물로 shape가 (3,2)인 행렬을 얻습니다,</span>
+<span class="c"># 이 행렬은 v와 w 외적의 결과입니다:</span>
+<span class="c"># [[ 4  5]</span>
+<span class="c">#  [ 8 10]</span>
+<span class="c">#  [12 15]]</span>
+<span class="k">print</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">w</span>
+
+<span class="c"># 벡터를 행렬의 각 행에 더하기</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]])</span>
+<span class="c"># x는 shape가 (2, 3)이고 v는 shape가 (3,)이므로 이 둘을 브로드캐스팅하면 shape가 (2, 3)인</span>
+<span class="c"># 아래와 같은 행렬이 나옵니다:</span>
+<span class="c"># [[2 4 6]</span>
+<span class="c">#  [5 7 9]]</span>
+<span class="k">print</span> <span class="n">x</span> <span class="o">+</span> <span class="n">v</span>
+
+<span class="c"># 벡터를 행렬의 각 행에 더하기</span>
+<span class="c"># x는 shape가 (2, 3)이고 w는 shape가 (2,)입니다.</span>
+<span class="c"># x의 전치행렬은 shape가 (3,2)이며 이는 w와 브로드캐스팅이 가능하고 결과로 shape가 (3,2)인 행렬이 생깁니다;</span>
+<span class="c"># 이 행렬을 전치하면 shape가 (2,3)인 행렬이 나오며</span>
+<span class="c"># 이는 행렬 x의 각 열에 벡터 w을 더한 결과와 동일합니다.</span>
+<span class="c"># 아래의 행렬입니다:</span>
+<span class="c"># [[ 5  6  7]</span>
+<span class="c">#  [ 9 10 11]]</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span> <span class="o">+</span> <span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="c"># 다른 방법은 w를 shape가 (2,1)인 열벡터로 변환하는 것입니다;</span>
+<span class="c"># 그런 다음 이를 바로 x에 브로드캐스팅해 더하면</span>
+<span class="c"># 동일한 결과가 나옵니다.</span>
+<span class="k">print</span> <span class="n">x</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="c"># 행렬의 스칼라배:</span>
+<span class="c"># x 의 shape는 (2, 3)입니다. Numpy는 스칼라를 shape가 ()인 배열로 취급합니다;</span>
+<span class="c"># 그렇기에 스칼라 값은 (2,3) shape로 브로드캐스트 될 수 있고,</span>
+<span class="c"># 아래와 같은 결과를 만들어 냅니다:</span>
+<span class="c"># [[ 2  4  6]</span>
+<span class="c">#  [ 8 10 12]]</span>
+<span class="k">print</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span>
+</code></pre>
+</div>
+
+<p>브로드캐스팅은 보통 코드를 간결하고 빠르게 해줍니다, 그러니 가능한 많이 사용하세요.</p>
+
+<h3 id="numpy-documentation">Numpy Documentation</h3>
+<p>이 문서는 여러분이 numpy에 대해 알아야할 많은 중요한 사항들을 다루지만 완벽하진 않습니다.
+numpy에 관한 더 많은 사항은 <a href="http://docs.scipy.org/doc/numpy/reference/">numpy 레퍼런스</a>를 참조하세요.</p>
+
+<p><a name="scipy"></a></p>
+
+<h2 id="scipy">SciPy</h2>
+
+<p>Numpy는 고성능의 다차원 배열 객체와 이를 다룰 도구를 제공합니다.
+numpy를 바탕으로 만들어진 <a href="http://docs.scipy.org/doc/scipy/reference/">SciPy</a>는,
+numpy 배열을 다루는 많은 함수를 제공하며 다양한 과학, 공학분야에서 유용하게 사용됩니다.</p>
+
+<p>SciPy에 익숙해지는 최고의 방법은 <a href="http://docs.scipy.org/doc/scipy/reference/index.html">SciPy 공식 문서</a>를 보는 것입니다.
+이 문서에서는 scipy중 cs231n 수업에서 유용하게 쓰일 일부분만을 소개할것입니다.</p>
+
+<p><a name="scipy-image"></a></p>
+
+<h3 id="section-15">이미지 작업</h3>
+<p>SciPy는 이미지를 다룰 기본적인 함수들을 제공합니다.
+예를들자면, 디스크에 저장된 이미지를 numpy 배열로 읽어 들이는 함수가 있으며,
+numpy 배열을 디스크에 이미지로 저장하는 함수도 있고, 이미지의 크기를 바꾸는 함수도 있습니다.
+이 함수들의 간단한 사용 예시입니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">scipy.misc</span> <span class="kn">import</span> <span class="n">imread</span><span class="p">,</span> <span class="n">imsave</span><span class="p">,</span> <span class="n">imresize</span>
+
+<span class="c"># JPEG 이미지를 numpy 배열로 읽어들이기</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="s">'assets/cat.jpg'</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">img</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span>  <span class="c"># 출력 "uint8 (400, 248, 3)"</span>
+
+<span class="c"># 각각의 색깔 채널을 다른 상수값으로 스칼라배함으로써</span>
+<span class="c"># 이미지의 색을 변화시킬 수 있습니다.</span>
+<span class="c"># 이미지의 shape는 (400, 248, 3)입니다;</span>
+<span class="c"># 여기에 shape가 (3,)인 배열 [1, 0.95, 0.9]를 곱합니다;</span>
+<span class="c"># numpy 브로드캐스팅에 의해 이 배열이 곱해지며 붉은색 채널은 변하지 않으며,</span>
+<span class="c"># 초록색, 파란색 채널에는 각각 0.95, 0.9가 곱해집니다</span>
+<span class="n">img_tinted</span> <span class="o">=</span> <span class="n">img</span> <span class="o">*</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">]</span>
+
+<span class="c"># 색변경 이미지를 300x300픽셀로 크기 조절.</span>
+<span class="n">img_tinted</span> <span class="o">=</span> <span class="n">imresize</span><span class="p">(</span><span class="n">img_tinted</span><span class="p">,</span> <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">300</span><span class="p">))</span>
+
+<span class="c"># 색변경 이미지를 디스크에 기록하기</span>
+<span class="n">imsave</span><span class="p">(</span><span class="s">'assets/cat_tinted.jpg'</span><span class="p">,</span> <span class="n">img_tinted</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<div class="fig figcenter fighighlight">
+  <img src="/cs231n/assets/cat.jpg" />
+  <img src="/cs231n/assets/cat_tinted.jpg" />
+  <div class="figcaption">
+    Left: 원본 이미지.
+    Right: 색변경 &amp; 크기변경 이미지.
+  </div>
+</div>
+
+<p><a name="scipy-matlab"></a></p>
+
+<h3 id="matlab-">MATLAB 파일</h3>
+<p><code class="highlighter-rouge">scipy.io.loadmat</code> 와 <code class="highlighter-rouge">scipy.io.savemat</code>함수를 통해
+matlab 파일을 읽고 쓸 수 있습니다.
+<a href="http://docs.scipy.org/doc/scipy/reference/io.html">문서</a>를 참조하세요.</p>
+
+<p><a name="scipy-dist"></a></p>
+
+<h3 id="section-16">두 점 사이의 거리</h3>
+<p>SciPy에는 점들간의 거리를 계산하기 위한 유용한 함수들이 정의되어 있습니다.</p>
+
+<p><code class="highlighter-rouge">scipy.spatial.distance.pdist</code>함수는 주어진 점들 사이의 모든 거리를 계산합니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">pdist</span><span class="p">,</span> <span class="n">squareform</span>
+
+<span class="c"># 각 행이 2차원 공간에서의 한 점을 의미하는 행렬을 생성:</span>
+<span class="c"># [[0 1]</span>
+<span class="c">#  [1 0]</span>
+<span class="c">#  [2 0]]</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="k">print</span> <span class="n">x</span>
+
+<span class="c"># x가 나타내는 모든 점 사이의 유클리디안 거리를 계산.</span>
+<span class="c"># d[i, j]는 x[i, :]와 x[j, :]사이의 유클리디안 거리를 의미하며,   </span>
+<span class="c"># d는 아래의 행렬입니다:</span>
+<span class="c"># [[ 0.          1.41421356  2.23606798]</span>
+<span class="c">#  [ 1.41421356  0.          1.        ]</span>
+<span class="c">#  [ 2.23606798  1.          0.        ]]</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">squareform</span><span class="p">(</span><span class="n">pdist</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s">'euclidean'</span><span class="p">))</span>
+<span class="k">print</span> <span class="n">d</span>
+</code></pre>
+</div>
+<p>이 함수에 대한 자세한 사항은 <a href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.pdist.html">pidst 공식 문서</a>를 참조하세요.</p>
+
+<p><code class="highlighter-rouge">scipy.spatial.distance.cdist</code>도 위와 유사하게 점들 사이의 거리를 계산합니다. 자세한 사항은 <a href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.cdist.html">cdist 공식 문서</a>를 참조하세요.</p>
+
+<p><a name="matplotlib"></a></p>
+
+<h2 id="matplotlib">Matplotlib</h2>
+<p><a href="http://matplotlib.org/">Matplotlib</a>는 plotting 라이브러리입니다.
+이번에는 MATLAB의 plotting 시스템과 유사한 기능을 제공하는
+<code class="highlighter-rouge">matplotlib.pyplot</code> 모듈에 관한 간략한 소개가 있겠습니다.,</p>
+
+<p><a name="matplotlib-plot"></a></p>
+
+<h3 id="plotting">Plotting</h3>
+<p>matplotlib에서 가장 중요한 함수는 2차원 데이터를 그릴 수 있게 해주는 <code class="highlighter-rouge">plot</code>입니다.
+여기 간단한 예시가 있습니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="c"># 사인과 코사인 곡선의 x,y 좌표를 계산</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c"># matplotlib를 이용해 점들을 그리기</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>  <span class="c"># 그래프를 나타나게 하기 위해선 plt.show()함수를 호출해야만 합니다.</span>
+</code></pre>
+</div>
+
+<p>이 코드를 실행하면 아래의 그래프가 생성됩니다:</p>
+
+<div class="fig figcenter fighighlight">
+  <img src="/cs231n/assets/sine.png" />
+</div>
+
+<p>약간의 몇 가지 추가적인 작업을 통해 여러 개의 그래프와 제목, 범주, 축 이름을 한 번에 쉽게 나타낼 수 있습니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="c"># 사인과 코사인 곡선의 x,y 좌표를 계산</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">y_sin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">y_cos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c"># matplotlib를 이용해 점들을 그리기</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y_sin</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y_cos</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'x axis label'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'y axis label'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Sine and Cosine'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s">'Sine'</span><span class="p">,</span> <span class="s">'Cosine'</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre>
+</div>
+<div class="fig figcenter fighighlight">
+  <img src="/cs231n/assets/sine_cosine.png" />
+</div>
+
+<p><code class="highlighter-rouge">plot</code>함수에 관한 더 많은 내용은 <a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.plot">문서</a>를 참조하세요.</p>
+
+<p><a name="matplotlib-subplots"></a></p>
+
+<h3 id="subplots">Subplots</h3>
+
+<p>‘subplot’함수를 통해 다른 내용도 동일한 그림 위에 나타낼 수 있습니다.
+여기 간단한 예시가 있습니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="c"># 사인과 코사인 곡선의 x,y 좌표를 계산</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">y_sin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">y_cos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c"># 높이가 2이고 너비가 1인 subplot 구획을 설정하고,</span>
+<span class="c"># 첫 번째 구획을 활성화.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c"># 첫 번째 그리기</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y_sin</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Sine'</span><span class="p">)</span>
+
+<span class="c"># 두 번째 subplot 구획을 활성화 하고 그리기</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y_cos</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Cosine'</span><span class="p">)</span>
+
+<span class="c"># 그림 보이기.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<div class="fig figcenter fighighlight">
+  <img src="/cs231n/assets/sine_cosine_subplot.png" />
+</div>
+
+<p><code class="highlighter-rouge">subplot</code>함수에 관한 더 많은 내용은
+<a href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.subplot">문서</a>를 참조하세요.</p>
+
+<p><a name="matplotlib-images"></a></p>
+
+<h3 id="section-17">이미지</h3>
+<p><code class="highlighter-rouge">imshow</code>함수를 사용해 이미지를 나타낼 수 있습니다. 여기 예시가 있습니다:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.misc</span> <span class="kn">import</span> <span class="n">imread</span><span class="p">,</span> <span class="n">imresize</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="s">'assets/cat.jpg'</span><span class="p">)</span>
+<span class="n">img_tinted</span> <span class="o">=</span> <span class="n">img</span> <span class="o">*</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">]</span>
+
+<span class="c"># 원본 이미지 나타내기</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+<span class="c"># 색변화된 이미지 나타내기</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="c"># imshow를 이용하며 주의할 점은 데이터의 자료형이</span>
+<span class="c"># uint8이 아니라면 이상한 결과를 보여줄 수도 있다는 것입니다.</span>
+<span class="c"># 그러므로 이미지를 나타내기 전에 명시적으로 자료형을 uint8로 형변환 해줍니다.</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">(</span><span class="n">img_tinted</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre>
+</div>
+
+<div class="fig figcenter fighighlight">
+  <img src="/cs231n/assets/cat_tinted_imshow.png" />
+</div>
+
+<hr />
+<p style="text-align:right"><b>
+번역: 강상훈 <a href="https://github.com/sanghkaang" style="color:black">(sanghkaang)</a>
+</b></p>
+
+  </article>
+
+</div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        <li>
+          <a href="https://github.com/aikorea">
+            <span class="icon github">
+              <svg version="1.1" class="github-icon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill-rule="evenodd" clip-rule="evenodd" fill="#C2C2C2" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761
+                c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32
+                c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472
+                c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037
+                C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65
+                c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261
+                c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082
+                c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129
+                c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+              </svg>
+            </span>
+            <span class="username">aikorea</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://twitter.com/kjw6612">
+            <span class="icon twitter">
+              <svg version="1.1" class="twitter-icon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill="#C2C2C2" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809
+                c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27
+                c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767
+                c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206
+                C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271
+                c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469
+                c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/>
+              </svg>
+            </span>
+            <span class="username">kjw6612</span>
+          </a>
+        </li>
+        <li>
+          <a href="mailto:team.aikorea@gmail.com">team.aikorea@gmail.com</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </body>
+</html>
